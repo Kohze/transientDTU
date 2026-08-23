@@ -95,6 +95,7 @@ rankCandidates <- function(
     required <- c(
         "feature_id", "gene_id", "gene_name", "focal_group",
         "start_stage", "end_stage", "start_index", "end_index", "n_stages",
+        "start_coordinate", "end_coordinate", "coordinate_span",
         "direction", "weakest_component_q", "max_abs_usage_difference",
         "replicate_separation", "replicate_consistent", "reciprocal_exchange"
     )
@@ -141,6 +142,9 @@ rankCandidates <- function(
             start_index = as.integer(value$start_index[[1L]]),
             end_index = as.integer(value$end_index[[1L]]),
             n_stages = max(value$n_stages),
+            start_coordinate = as.numeric(value$start_coordinate[[1L]]),
+            end_coordinate = as.numeric(value$end_coordinate[[1L]]),
+            coordinate_span = as.numeric(value$coordinate_span[[1L]]),
             n_features = length(feature_ids),
             feature_ids = paste(feature_ids, collapse = ";"),
             directions = paste(directions, collapse = ";"),

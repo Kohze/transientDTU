@@ -15,16 +15,18 @@ candidate ranking.
 Pairwise DTU result tables answer whether usage differs in individual
 contrasts. They do not directly encode the more specific temporal question:
 
-> Does one group separate coherently from at least two alternatives, remain
+> Does one group separate coherently from the required alternatives, remain
 > separated for one or more consecutive stages, and reconverge on both sides?
 
 `transientDTU` makes that rule explicit and reusable. It provides:
 
 - method-agnostic long-table input;
-- any number of ordered stages and at least three groups;
+- preflight schema, coverage, and replicate-cell auditing;
+- any number of ordered stages and two or more groups;
 - component-q, effect, comparator-coherence, and flank requirements;
+- configurable episode length, flank depth, and irregular-time annotations;
 - explicit missing-data and boundary behavior;
-- replicate-level complete-separation checks;
+- complete, quantile, or median replicate-level robustness checks;
 - reciprocal exchange annotation;
 - deterministic one-row-per-gene ranking;
 - joint threshold-grid stability analysis;
@@ -57,6 +59,13 @@ BiocManager::install("transientDTU")
 library(transientDTU)
 data("transientExample")
 
+auditTransientInput(
+    transientExample$pairwise,
+    transientExample$stage_order,
+    usage = transientExample$usage,
+    col_data = transientExample$col_data
+)
+
 result <- runTransientDTU(
     transientExample$pairwise,
     stage_order = transientExample$stage_order,
@@ -77,6 +86,11 @@ arguments of `makeStageDTU()` or `runTransientDTU()`. The signed effect must
 always be `focal usage - comparator usage`. See the
 [upstream input guide](inst/UPSTREAM_INPUT.md) for the required contract and
 method-specific reshaping guidance.
+
+Two-group studies use `min_comparators = 1`; the paper-compatible multi-group
+default remains two comparators. See the
+[20-researcher use-case analysis](USE_CASE_ANALYSIS.md) for supported,
+conditional, and deliberately out-of-scope designs.
 
 ## Scope and statistical boundary
 

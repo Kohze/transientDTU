@@ -10,12 +10,13 @@
 #'
 #' The primary workflow is:
 #'
-#' 1. [makeStageDTU()] standardizes pairwise evidence;
-#' 2. [detectEpisodes()] identifies bounded runs;
-#' 3. [checkReplicateSeparation()] optionally checks non-overlap;
-#' 4. [annotateReciprocal()] marks compositional exchanges;
-#' 5. [rankCandidates()] creates a deterministic panel; or
-#' 6. [runTransientDTU()] performs all steps together.
+#' 1. [auditTransientInput()] reports schema and coverage risks;
+#' 2. [makeStageDTU()] standardizes pairwise evidence;
+#' 3. [detectEpisodes()] identifies bounded runs;
+#' 4. [checkReplicateSeparation()] optionally checks replicate robustness;
+#' 5. [annotateReciprocal()] marks compositional exchanges;
+#' 6. [rankCandidates()] creates a deterministic panel; or
+#' 7. [runTransientDTU()] performs the decision steps together.
 #'
 #' [SummarizedExperiment::SummarizedExperiment] assays can be used for
 #' replicate checks and the optional [fitPairwiseUsage()] inference adapter.

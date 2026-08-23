@@ -1,5 +1,5 @@
 ---
-title: "Validating the transientDTU decision layer"
+title: "2. Validating the transientDTU decision layer"
 author: "Robin Gounder"
 date: "2026-08-23"
 output:

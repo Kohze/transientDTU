@@ -1,9 +1,9 @@
 make_usage_fixture <- function(
     event_stages = "s3",
     event_group = "A",
-    missing_sample = FALSE
+    missing_sample = FALSE,
+    stages = paste0("s", 1:5)
 ) {
-    stages <- paste0("s", 1:5)
     groups <- c("A", "B", "C")
     col_data <- expand.grid(
         replicate = 1:2,

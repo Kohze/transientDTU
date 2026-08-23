@@ -13,6 +13,10 @@ detectEpisodes(
   flank_tolerance = effect_threshold,
   gene_q_threshold = NULL,
   min_comparators = 2L,
+  min_episode_stages = 1L,
+  max_episode_stages = Inf,
+  flank_width = 1L,
+  stage_coordinates = NULL,
   flank_missing = c("available", "complete")
 )
 }
@@ -40,10 +44,21 @@ p-values. Use \code{NULL} to disable gene-level screening.}
 
 \item{min_comparators}{Minimum number of comparator groups required.}
 
+\item{min_episode_stages, max_episode_stages}{Inclusive bounds on the number
+of consecutive eligible stages in an episode. \code{Inf} disables the upper
+bound.}
+
+\item{flank_width}{Number of observed stages required before and after an
+episode. The paper-compatible default is one on each side.}
+
+\item{stage_coordinates}{Optional strictly increasing numeric coordinates in
+\code{stage_order}, or a named numeric vector keyed by stage. These annotate
+irregularly spaced designs without changing adjacency or threshold rules.}
+
 \item{flank_missing}{\code{"available"} reproduces the original rule by using
-all finite immediate-flank effects and requiring at least one finite flank.
-\code{"complete"} requires finite summaries at both flanks. Entirely absent
-stage rows always break an episode under either setting.}
+all finite requested-flank effects and requiring at least one finite
+flank. \code{"complete"} requires finite summaries at every requested flank.
+Entirely absent stage rows always break an episode under either setting.}
 }
 \value{
 A \link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame} with one row per detected feature-level
@@ -52,7 +67,7 @@ episode. Empty analyses return the same typed columns with zero rows.
 \description{
 Applies a frozen post-inference decision rule to standardized stage-level
 evidence from \code{\link[=makeStageDTU]{makeStageDTU()}}. Consecutive eligible stages are collapsed
-into a single episode and retained only when both immediate flanks satisfy
+into a single episode and retained only when the requested flanks satisfy
 the reconvergence tolerance.
 }
 \details{

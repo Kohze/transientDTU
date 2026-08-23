@@ -28,16 +28,20 @@ otherwise.
 
 ## Episode
 
-Consecutive equal non-zero states form a candidate run. A run is retained only
-when both immediately adjacent ordered stages are observed and the maximum
-absolute focal-versus-comparator effect over both flanks is strictly below
-`flank_tolerance`. Thus boundary runs are not episodes under the default rule.
+Consecutive equal non-zero states form a candidate run. The run length must be
+within `min_episode_stages` and `max_episode_stages`. A run is retained only
+when the requested `flank_width` stages on each side are observed and the
+maximum absolute focal-versus-comparator effect over those flanks is strictly
+below `flank_tolerance`. Thus boundary runs are not episodes under the default
+rule.
 Missing stage rows break runs and cannot serve as reconverged flanks. The
 default legacy-compatible `flank_missing = "available"` rule ignores non-finite
 effect summaries at an otherwise observed flank, requires at least one finite
-flank summary, and records whether both were finite. The stricter
-`flank_missing = "complete"` sensitivity requires finite summaries at both
-flanks.
+flank summary, and records completeness. The stricter `flank_missing =
+"complete"` sensitivity requires finite summaries at every requested flank.
+Defaults of one or more episode stages and one flank stage on each side exactly
+retain the paper rule. Optional strictly increasing stage coordinates annotate
+elapsed spans but do not change ordinal adjacency.
 
 The episode key is feature, gene, focal group, start stage, end stage, and
 direction. The weakest component evidence is the maximum adjusted p-value in
@@ -51,6 +55,12 @@ separation `min(comparator replicates) - max(focal replicates)`. The episode
 separation is the minimum of these values across its stages. Strictly positive
 separation means every focal replicate lies beyond every comparator replicate
 in the required direction at every episode stage.
+
+This is `replicate_method = "complete"`, the default. The optional `"quantile"`
+method substitutes inner tail quantiles and `"median"` substitutes group
+medians. They are descriptive robustness summaries, not inferential tests.
+Missing values either make an episode incomplete or are omitted subject to a
+minimum finite replicate count in the focal and every comparator group.
 
 ## Reciprocal exchange
 

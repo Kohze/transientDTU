@@ -23,7 +23,8 @@ simulateTransientDTU(
 
 \item{n_stages}{Number of ordered stages; at least five.}
 
-\item{groups}{Character group identifiers; at least three.}
+\item{groups}{Character group identifiers; at least two. Two-group output
+must be analyzed with \code{min_comparators = 1}.}
 
 \item{n_replicates}{Replicates per group-stage cell.}
 

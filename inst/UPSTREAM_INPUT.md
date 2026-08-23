@@ -13,7 +13,7 @@ one stage. Required fields are:
 |---|---|---|
 | feature identifier | `feature_id` | one gene mapping only |
 | gene identifier | `gene_id` | stable across stages |
-| focal group | `focal_group` | at least three groups overall |
+| focal group | `focal_group` | at least two groups overall |
 | comparator group | `comparator_group` | different from focal |
 | ordered stage | `stage` | present in `stage_order` |
 | signed usage effect | `effect` | focal minus comparator |
@@ -27,6 +27,11 @@ Supply both directions only when both groups may act as the focal group. Do not
 manufacture a missing direction by negating an effect unless the associated
 inferential statistic is valid for that directed contrast. Duplicate atomic
 rows are rejected.
+
+Run `auditTransientInput()` before discovery. For a two-group study, set
+`min_comparators = 1`. For a targeted scan containing only prespecified focal
+groups, provide `expected_groups` and optionally `expected_focal_groups`; reverse
+focal directions are not required unless they are part of the intended search.
 
 ## Common upstream methods
 
@@ -47,3 +52,6 @@ rows are rejected.
 Always record the upstream model, normalization, contrast matrix, multiplicity
 family, feature filtering, and software versions. The output does not carry
 episode-level FDR control merely because its input contains adjusted p-values.
+For single-cell or repeated-measures studies, cells and repeated observations
+must not be treated as independent biological replicates unless the upstream
+design genuinely supports that assumption.

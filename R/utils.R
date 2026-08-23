@@ -40,6 +40,19 @@
     invisible(TRUE)
 }
 
+.assert_count_or_inf <- function(x, name, lower = 1L) {
+    if (length(x) != 1L || !is.numeric(x) || is.na(x) ||
+            !(is.infinite(x) && x > 0) &&
+            (!is.finite(x) || x != as.integer(x) || x < lower)) {
+        stop(
+            "'", name, "' must be one integer >= ", lower,
+            " or positive Inf.",
+            call. = FALSE
+        )
+    }
+    invisible(TRUE)
+}
+
 .as_id <- function(x, name, allow_na = FALSE) {
     value <- as.character(x)
     invalid <- is.na(value) | !nzchar(value)
@@ -68,11 +81,15 @@
         start_index = integer(),
         end_index = integer(),
         n_stages = integer(),
+        start_coordinate = numeric(),
+        end_coordinate = numeric(),
+        coordinate_span = numeric(),
         direction = character(),
         max_abs_usage_difference = numeric(),
         mean_abs_usage_difference = numeric(),
         weakest_component_q = numeric(),
         flanking_max_abs_difference = numeric(),
+        n_required_flanks = integer(),
         n_finite_flanks = integer(),
         flanking_complete = logical(),
         gene_q = numeric(),
@@ -94,6 +111,9 @@
         start_index = integer(),
         end_index = integer(),
         n_stages = integer(),
+        start_coordinate = numeric(),
+        end_coordinate = numeric(),
+        coordinate_span = numeric(),
         n_features = integer(),
         feature_ids = character(),
         directions = character(),

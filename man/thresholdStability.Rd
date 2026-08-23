@@ -16,6 +16,7 @@ thresholdStability(
   panel_size = 6L,
   reciprocal_only = TRUE,
   min_comparators = 2L,
+  episode_args = list(),
   replicate_action = c("none", "annotate", "filter"),
   ...
 )
@@ -36,13 +37,17 @@ Include \code{NULL} in a list to evaluate no gene-level screen.}
 
 \item{min_comparators}{Minimum number of comparator groups.}
 
+\item{episode_args}{Named fixed arguments passed to \code{\link[=detectEpisodes]{detectEpisodes()}}, such
+as \code{flank_width}, \code{min_episode_stages}, or \code{stage_coordinates}. Grid
+thresholds and \code{stage_data} cannot be overridden.}
+
 \item{replicate_action}{\code{"none"}, \code{"annotate"}, or \code{"filter"}.}
 
 \item{...}{Additional arguments passed to \code{\link[=checkReplicateSeparation]{checkReplicateSeparation()}}.}
 }
 \value{
 A list containing \code{summary}, \code{selections}, and \code{selection_frequency}
-\link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame} objects.
+\link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame} objects plus the fixed \code{parameters}.
 }
 \description{
 Re-runs the complete frozen detector across all joint combinations of the

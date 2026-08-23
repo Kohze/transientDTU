@@ -2,7 +2,7 @@
 #'
 #' Applies a frozen post-inference decision rule to standardized stage-level
 #' evidence from [makeStageDTU()]. Consecutive eligible stages are collapsed
-#' into a single episode and retained only when both immediate flanks satisfy
+#' into a single episode and retained only when the requested flanks satisfy
 #' the reconvergence tolerance.
 #'
 #' @param stage_data Output from [makeStageDTU()] or an equivalent table with
@@ -20,10 +20,18 @@
 #' @param gene_q_threshold Optional strict upper bound for gene-level adjusted
 #'   p-values. Use `NULL` to disable gene-level screening.
 #' @param min_comparators Minimum number of comparator groups required.
+#' @param min_episode_stages,max_episode_stages Inclusive bounds on the number
+#'   of consecutive eligible stages in an episode. `Inf` disables the upper
+#'   bound.
+#' @param flank_width Number of observed stages required before and after an
+#'   episode. The paper-compatible default is one on each side.
+#' @param stage_coordinates Optional strictly increasing numeric coordinates in
+#'   `stage_order`, or a named numeric vector keyed by stage. These annotate
+#'   irregularly spaced designs without changing adjacency or threshold rules.
 #' @param flank_missing `"available"` reproduces the original rule by using
-#'   all finite immediate-flank effects and requiring at least one finite flank.
-#'   `"complete"` requires finite summaries at both flanks. Entirely absent
-#'   stage rows always break an episode under either setting.
+#'   all finite requested-flank effects and requiring at least one finite
+#'   flank. `"complete"` requires finite summaries at every requested flank.
+#'   Entirely absent stage rows always break an episode under either setting.
 #'
 #' @return A [S4Vectors::DataFrame] with one row per detected feature-level
 #'   episode. Empty analyses return the same typed columns with zero rows.
@@ -51,6 +59,10 @@ detectEpisodes <- function(
     flank_tolerance = effect_threshold,
     gene_q_threshold = NULL,
     min_comparators = 2L,
+    min_episode_stages = 1L,
+    max_episode_stages = Inf,
+    flank_width = 1L,
+    stage_coordinates = NULL,
     flank_missing = c("available", "complete")
 ) {
     stage_attribute <- attr(stage_data, "stage_order", exact = TRUE)
@@ -63,6 +75,16 @@ detectEpisodes <- function(
     )
     .assert_number(flank_tolerance, "flank_tolerance", 0, Inf)
     .assert_count(min_comparators, "min_comparators")
+    .assert_count(min_episode_stages, "min_episode_stages")
+    .assert_count_or_inf(max_episode_stages, "max_episode_stages")
+    .assert_count(flank_width, "flank_width")
+    if (max_episode_stages < min_episode_stages) {
+        stop(
+            "'max_episode_stages' cannot be smaller than ",
+            "'min_episode_stages'.",
+            call. = FALSE
+        )
+    }
     flank_missing <- match.arg(flank_missing)
     if (!is.null(gene_q_threshold)) {
         .assert_number(gene_q_threshold, "gene_q_threshold", 0, 1)
@@ -91,6 +113,40 @@ detectEpisodes <- function(
     }
     if (any(!as.character(stage_data$stage) %in% stage_order)) {
         stop("'stage_order' omits stages in 'stage_data'.", call. = FALSE)
+    }
+    if (is.null(stage_coordinates)) {
+        coordinates <- rep(NA_real_, length(stage_order))
+        names(coordinates) <- stage_order
+    } else {
+        if (!is.numeric(stage_coordinates) || anyNA(stage_coordinates) ||
+                any(!is.finite(stage_coordinates))) {
+            stop("'stage_coordinates' must contain finite numbers.",
+                call. = FALSE)
+        }
+        if (!is.null(names(stage_coordinates)) &&
+                all(nzchar(names(stage_coordinates)))) {
+            if (!setequal(names(stage_coordinates), stage_order)) {
+                stop(
+                    "Named 'stage_coordinates' must match 'stage_order'.",
+                    call. = FALSE
+                )
+            }
+            coordinates <- as.numeric(stage_coordinates[stage_order])
+        } else {
+            if (length(stage_coordinates) != length(stage_order)) {
+                stop(
+                    "Unnamed 'stage_coordinates' must match 'stage_order' ",
+                    "length.",
+                    call. = FALSE
+                )
+            }
+            coordinates <- as.numeric(stage_coordinates)
+        }
+        if (any(diff(coordinates) <= 0)) {
+            stop("'stage_coordinates' must be strictly increasing.",
+                call. = FALSE)
+        }
+        names(coordinates) <- stage_order
     }
 
     unique_key <- .stable_key(
@@ -165,8 +221,19 @@ detectEpisodes <- function(
         for (run_index in nonzero) {
             start <- starts[[run_index]]
             end <- ends[[run_index]]
-            if (start <= 1L || end >= length(stage_order)) next
-            flanks <- c(start - 1L, end + 1L)
+            episode_length <- end - start + 1L
+            if (episode_length < min_episode_stages ||
+                    episode_length > max_episode_stages) {
+                next
+            }
+            if (start <= flank_width ||
+                    end + flank_width > length(stage_order)) {
+                next
+            }
+            flanks <- c(
+                seq.int(start - flank_width, start - 1L),
+                seq.int(end + 1L, end + flank_width)
+            )
             if (!all(template$observed[flanks])) next
             flank_values <- template$max_abs_effect[flanks]
             finite_flanks <- is.finite(flank_values)
@@ -187,7 +254,10 @@ detectEpisodes <- function(
                 end_stage = stage_order[[end]],
                 start_index = start,
                 end_index = end,
-                n_stages = end - start + 1L,
+                n_stages = episode_length,
+                start_coordinate = coordinates[[start]],
+                end_coordinate = coordinates[[end]],
+                coordinate_span = coordinates[[end]] - coordinates[[start]],
                 direction = if (runs$values[[run_index]] > 0L) {
                     "higher"
                 } else {
@@ -203,6 +273,7 @@ detectEpisodes <- function(
                     template$worst_q[episode_rows]
                 ),
                 flanking_max_abs_difference = flanking_similarity,
+                n_required_flanks = length(flanks),
                 n_finite_flanks = sum(finite_flanks),
                 flanking_complete = all(finite_flanks),
                 gene_q = if (all(is.na(gene_q))) {
@@ -245,6 +316,10 @@ detectEpisodes <- function(
         flank_tolerance = flank_tolerance,
         gene_q_threshold = gene_q_threshold,
         min_comparators = as.integer(min_comparators),
+        min_episode_stages = as.integer(min_episode_stages),
+        max_episode_stages = max_episode_stages,
+        flank_width = as.integer(flank_width),
+        stage_coordinates = coordinates,
         flank_missing = flank_missing
     )
     result

@@ -12,11 +12,14 @@
 #' @param panel_size Candidate panel size.
 #' @param reciprocal_only Restrict rankings to reciprocal groups.
 #' @param min_comparators Minimum number of comparator groups.
+#' @param episode_args Named fixed arguments passed to [detectEpisodes()], such
+#'   as `flank_width`, `min_episode_stages`, or `stage_coordinates`. Grid
+#'   thresholds and `stage_data` cannot be overridden.
 #' @param replicate_action `"none"`, `"annotate"`, or `"filter"`.
 #' @param ... Additional arguments passed to [checkReplicateSeparation()].
 #'
 #' @return A list containing `summary`, `selections`, and `selection_frequency`
-#'   [S4Vectors::DataFrame] objects.
+#'   [S4Vectors::DataFrame] objects plus the fixed `parameters`.
 #'
 #' @examples
 #' simulated <- simulateTransientDTU(n_genes = 16, seed = 9)
@@ -44,13 +47,62 @@ thresholdStability <- function(
     panel_size = 6L,
     reciprocal_only = TRUE,
     min_comparators = 2L,
+    episode_args = list(),
     replicate_action = c("none", "annotate", "filter"),
     ...
 ) {
     stage_order <- attr(stage_data, "stage_order", exact = TRUE)
+    replicate_args <- list(...)
+    if (length(replicate_args) &&
+            (is.null(names(replicate_args)) ||
+                any(!nzchar(names(replicate_args))))) {
+        stop("All replicate arguments in '...' must be named.", call. = FALSE)
+    }
+    reserved_replicate <- c("episodes", "usage", "col_data", "keep")
+    invalid_replicate <- intersect(names(replicate_args), reserved_replicate)
+    unknown_replicate <- setdiff(
+        names(replicate_args), names(formals(checkReplicateSeparation))
+    )
+    if (length(c(invalid_replicate, unknown_replicate))) {
+        stop(
+            "Invalid replicate arguments: ",
+            paste(
+                unique(c(invalid_replicate, unknown_replicate)),
+                collapse = ", "
+            ),
+            ".",
+            call. = FALSE
+        )
+    }
     replicate_action <- match.arg(replicate_action)
     if (replicate_action != "none" && is.null(usage)) {
         stop("'usage' is required for replicate checking.", call. = FALSE)
+    }
+    if (!is.list(episode_args) ||
+            (length(episode_args) &&
+                (is.null(names(episode_args)) ||
+                    any(!nzchar(names(episode_args)))))) {
+        stop("'episode_args' must be a named list.", call. = FALSE)
+    }
+    fixed_names <- c(
+        "stage_data", "stage_order", "q_threshold", "effect_threshold",
+        "comparator_tolerance", "flank_tolerance", "gene_q_threshold",
+        "min_comparators"
+    )
+    invalid_episode_args <- intersect(names(episode_args), fixed_names)
+    unknown_episode_args <- setdiff(
+        names(episode_args), names(formals(detectEpisodes))
+    )
+    if (length(c(invalid_episode_args, unknown_episode_args))) {
+        stop(
+            "Invalid 'episode_args': ",
+            paste(
+                unique(c(invalid_episode_args, unknown_episode_args)),
+                collapse = ", "
+            ),
+            ".",
+            call. = FALSE
+        )
     }
     for (name in c(
         "q_threshold", "effect_threshold", "comparator_tolerance",
@@ -85,25 +137,39 @@ thresholdStability <- function(
 
     for (index in seq_len(nrow(grid))) {
         setting <- grid[index, , drop = FALSE]
-        episodes <- detectEpisodes(
-            stage_data,
-            stage_order = stage_order,
-            q_threshold = setting$q_threshold,
-            effect_threshold = setting$effect_threshold,
-            comparator_tolerance = setting$comparator_tolerance,
-            flank_tolerance = setting$flank_tolerance,
-            gene_q_threshold = gene_q_threshold[[setting$gene_q_index]],
-            min_comparators = min_comparators
+        gene_q_value <- gene_q_threshold[[setting$gene_q_index]]
+        episodes <- do.call(
+            detectEpisodes,
+            c(
+                list(
+                    stage_data = stage_data,
+                    stage_order = stage_order,
+                    q_threshold = setting$q_threshold,
+                    effect_threshold = setting$effect_threshold,
+                    comparator_tolerance = setting$comparator_tolerance,
+                    flank_tolerance = setting$flank_tolerance,
+                    gene_q_threshold = gene_q_value,
+                    min_comparators = min_comparators
+                ),
+                episode_args
+            )
         )
         if (replicate_action != "none") {
-            episodes <- checkReplicateSeparation(
-                episodes, usage, col_data,
-                keep = if (replicate_action == "filter") {
-                    "consistent"
-                } else {
-                    "all"
-                },
-                ...
+            episodes <- do.call(
+                checkReplicateSeparation,
+                c(
+                    list(
+                        episodes = episodes,
+                        usage = usage,
+                        col_data = col_data,
+                        keep = if (replicate_action == "filter") {
+                            "consistent"
+                        } else {
+                            "all"
+                        }
+                    ),
+                    replicate_args
+                )
             )
         }
         episodes <- annotateReciprocal(episodes)
@@ -161,6 +227,14 @@ thresholdStability <- function(
     list(
         summary = S4Vectors::DataFrame(summary),
         selections = S4Vectors::DataFrame(selection_table),
-        selection_frequency = S4Vectors::DataFrame(frequency)
+        selection_frequency = S4Vectors::DataFrame(frequency),
+        parameters = list(
+            panel_size = panel_size,
+            reciprocal_only = reciprocal_only,
+            min_comparators = as.integer(min_comparators),
+            replicate_action = replicate_action,
+            episode_args = episode_args,
+            replicate_args = replicate_args
+        )
     )
 }

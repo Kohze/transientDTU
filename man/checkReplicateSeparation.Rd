@@ -13,6 +13,10 @@ checkReplicateSeparation(
   group_col = "group",
   stage_col = "stage",
   min_separation = 0,
+  replicate_method = c("complete", "quantile", "median"),
+  quantile_probability = 0.1,
+  missing_values = c("incomplete", "omit"),
+  min_replicates = 1L,
   incomplete = c("keep", "drop", "error"),
   keep = c("all", "consistent")
 )
@@ -34,6 +38,20 @@ must match matrix columns.}
 
 \item{min_separation}{Strict lower bound for consistency. Zero requires
 non-overlap in the episode direction.}
+
+\item{replicate_method}{Summary used for each focal-versus-non-focal stage:
+\code{"complete"} compares the most extreme replicates and reproduces the paper;
+\code{"quantile"} compares inner quantiles; and \code{"median"} compares medians.
+These are descriptive robustness checks, not replacement inference.}
+
+\item{quantile_probability}{Tail probability for \code{replicate_method = "quantile"}; it must be strictly between zero and one half.}
+
+\item{missing_values}{\code{"incomplete"} marks an episode incomplete when any
+selected value is missing; \code{"omit"} removes non-finite values before
+checking \code{min_replicates}.}
+
+\item{min_replicates}{Minimum finite values required in the focal group and
+in every expected comparator group at each episode stage.}
 
 \item{incomplete}{One of \code{"keep"}, \code{"drop"}, or \code{"error"}, controlling
 episodes lacking complete finite replicate values.}

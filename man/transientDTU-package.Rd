@@ -17,12 +17,13 @@ audit the decision layer.
 \details{
 The primary workflow is:
 \enumerate{
+\item \code{\link[=auditTransientInput]{auditTransientInput()}} reports schema and coverage risks;
 \item \code{\link[=makeStageDTU]{makeStageDTU()}} standardizes pairwise evidence;
 \item \code{\link[=detectEpisodes]{detectEpisodes()}} identifies bounded runs;
-\item \code{\link[=checkReplicateSeparation]{checkReplicateSeparation()}} optionally checks non-overlap;
+\item \code{\link[=checkReplicateSeparation]{checkReplicateSeparation()}} optionally checks replicate robustness;
 \item \code{\link[=annotateReciprocal]{annotateReciprocal()}} marks compositional exchanges;
 \item \code{\link[=rankCandidates]{rankCandidates()}} creates a deterministic panel; or
-\item \code{\link[=runTransientDTU]{runTransientDTU()}} performs all steps together.
+\item \code{\link[=runTransientDTU]{runTransientDTU()}} performs the decision steps together.
 }
 
 \link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment} assays can be used for

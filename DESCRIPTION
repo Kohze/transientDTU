@@ -10,9 +10,10 @@ Authors@R: c(
 Description: Converts stage-specific differential transcript usage results into
     explicit, bounded diverge-reconverge episodes. The package accepts generic
     pairwise contrast tables from upstream differential usage methods, supports
-    replicate-level separation checks, annotates reciprocal exchanges, and
-    produces deterministic candidate rankings. It also provides simulation,
-    threshold-stability, benchmarking, visualization, and
+    preflight input auditing and configurable replicate-level robustness
+    checks, annotates reciprocal exchanges, and produces deterministic
+    candidate rankings. It also provides simulation, threshold-stability,
+    benchmarking, visualization, and
     SummarizedExperiment-compatible workflows for evaluating the operating
     characteristics of the decision layer.
 License: Artistic-2.0

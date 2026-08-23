@@ -165,52 +165,34 @@ makeStageDTU <- function(
             canonical$feature_id, canonical$focal_group, canonical$stage
         )
     )
-    rows <- lapply(split_index, function(index) {
+    first_rows <- vapply(
+        split_index, function(index) index[[1L]], integer(1)
+    )
+    summaries <- vapply(split_index, function(index) {
         value <- canonical[index, , drop = FALSE]
         effects <- value$effect
         q_values <- value$q_value
-        comparator_count <- length(unique(value$comparator_group))
-        required_comparators <- setdiff(groups, value$focal_group[[1L]])
-        complete <- if (isTRUE(require_all_comparators)) {
-            setequal(unique(value$comparator_group), required_comparators)
-        } else {
-            comparator_count >= min_comparators
-        }
-        coherent <- all(is.finite(effects)) &&
-            (all(effects > 0) || all(effects < 0))
-
-        data.frame(
-            feature_id = value$feature_id[[1L]],
-            gene_id = value$gene_id[[1L]],
-            gene_name = value$gene_name[[1L]],
-            focal_group = value$focal_group[[1L]],
-            stage = value$stage[[1L]],
-            stage_index = match(value$stage[[1L]], stage_order),
-            n_comparators = comparator_count,
-            complete_comparisons = complete,
-            direction_coherent = coherent,
-            direction_sign = if (coherent) sign(effects[[1L]]) else 0,
-            mean_effect = if (all(is.finite(effects))) {
-                mean(effects)
-            } else {
-                NA_real_
-            },
-            min_abs_effect = if (all(is.finite(effects))) {
+        finite_effects <- all(is.finite(effects))
+        c(
+            mean_effect = if (finite_effects) mean(effects) else NA_real_,
+            min_abs_effect = if (finite_effects) {
                 min(abs(effects))
             } else {
                 NA_real_
             },
-            max_abs_effect = if (all(is.finite(effects))) {
+            max_abs_effect = if (finite_effects) {
                 max(abs(effects))
             } else {
                 NA_real_
             },
-            comparator_spread = if (all(is.finite(effects))) {
+            min_effect = if (finite_effects) min(effects) else NA_real_,
+            max_effect = if (finite_effects) max(effects) else NA_real_,
+            comparator_spread = if (finite_effects) {
                 diff(range(effects))
             } else {
                 NA_real_
             },
-            worst_q = if (length(q_values) && all(is.finite(q_values))) {
+            worst_q = if (all(is.finite(q_values))) {
                 max(q_values)
             } else {
                 NA_real_
@@ -219,11 +201,39 @@ makeStageDTU <- function(
                 NA_real_
             } else {
                 max(value$gene_q, na.rm = TRUE)
-            },
-            stringsAsFactors = FALSE
+            }
         )
-    })
-    answer <- do.call(rbind, rows)
+    }, numeric(8))
+    coherent <- is.finite(summaries["min_effect", ]) &
+        (summaries["min_effect", ] > 0 |
+            summaries["max_effect", ] < 0)
+    comparator_count <- lengths(split_index)
+    complete <- if (isTRUE(require_all_comparators)) {
+        comparator_count == length(groups) - 1L
+    } else {
+        comparator_count >= min_comparators
+    }
+    answer <- data.frame(
+        feature_id = canonical$feature_id[first_rows],
+        gene_id = canonical$gene_id[first_rows],
+        gene_name = canonical$gene_name[first_rows],
+        focal_group = canonical$focal_group[first_rows],
+        stage = canonical$stage[first_rows],
+        stage_index = match(canonical$stage[first_rows], stage_order),
+        n_comparators = as.integer(comparator_count),
+        complete_comparisons = complete,
+        direction_coherent = coherent,
+        direction_sign = ifelse(
+            coherent, sign(summaries["mean_effect", ]), 0
+        ),
+        mean_effect = summaries["mean_effect", ],
+        min_abs_effect = summaries["min_abs_effect", ],
+        max_abs_effect = summaries["max_abs_effect", ],
+        comparator_spread = summaries["comparator_spread", ],
+        worst_q = summaries["worst_q", ],
+        gene_q = summaries["gene_q", ],
+        stringsAsFactors = FALSE
+    )
     rownames(answer) <- NULL
     answer <- answer[order(
         answer$feature_id, answer$focal_group, answer$stage_index

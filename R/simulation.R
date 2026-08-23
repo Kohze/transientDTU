@@ -7,7 +7,8 @@
 #'
 #' @param n_genes Number of two-feature genes.
 #' @param n_stages Number of ordered stages; at least five.
-#' @param groups Character group identifiers; at least three.
+#' @param groups Character group identifiers; at least two. Two-group output
+#'   must be analyzed with `min_comparators = 1`.
 #' @param n_replicates Replicates per group-stage cell.
 #' @param signal Absolute usage shift for the first feature in affected genes.
 #' @param noise_sd Gaussian replicate noise on the usage scale.
@@ -55,8 +56,8 @@ simulateTransientDTU <- function(
     .assert_count(transient_stage, "transient_stage", 2L)
     .assert_number(missing_fraction, "missing_fraction", 0, 0.9)
     groups <- unique(.as_id(groups, "groups"))
-    if (length(groups) < 3L) {
-        stop("At least three groups are required.", call. = FALSE)
+    if (length(groups) < 2L) {
+        stop("At least two groups are required.", call. = FALSE)
     }
     if (transient_stage >= n_stages) {
         stop("'transient_stage' must have an earlier and a later flank.",

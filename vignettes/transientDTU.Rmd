@@ -1,5 +1,5 @@
 ---
-title: "transientDTU: detecting bounded transcript-usage episodes"
+title: "1. Detecting bounded transcript-usage episodes"
 author: "Robin Gounder"
 date: "2026-08-23"
 output:
@@ -64,6 +64,21 @@ head(transientExample$pairwise)
 Column names are configurable, so the table can originate from any upstream
 method. Duplicate atomic contrasts are rejected rather than silently reduced.
 
+Run a preflight audit before discovery. It distinguishes blocking structural
+errors from contrast-coverage or replicate warnings, while explicitly reminding
+the user which inferential properties cannot be checked from a result table.
+
+```{r audit}
+input_audit <- auditTransientInput(
+    transientExample$pairwise,
+    transientExample$stage_order,
+    usage = transientExample$usage,
+    col_data = transientExample$col_data
+)
+input_audit
+head(input_audit$coverage)
+```
+
 ## Standardize stage evidence
 
 ```{r stage}
@@ -98,6 +113,24 @@ Consecutive equal non-zero states collapse to one interval. The immediate stage
 before and after the interval must be observed and must meet the flank
 tolerance; boundary runs are not called.
 
+Duration and flank depth are explicit rather than inferred from labels. Numeric
+coordinates annotate irregular spacing, while episode adjacency remains the
+declared stage order.
+
+```{r episode-controls}
+stage_coordinates <- c(0, 1, 2, 4, 8, 16, 32, 64)
+controlled <- detectEpisodes(
+    stage,
+    min_episode_stages = 1,
+    max_episode_stages = 2,
+    flank_width = 1,
+    stage_coordinates = stage_coordinates
+)
+controlled[, c(
+    "start_stage", "end_stage", "n_stages", "coordinate_span"
+)]
+```
+
 The legacy-compatible default uses all available finite flank summaries and
 records `n_finite_flanks` and `flanking_complete`. A stricter sensitivity is:
 
@@ -127,6 +160,50 @@ rankCandidates(
     reciprocal_only = TRUE,
     replicate_consistent_only = TRUE
 )
+```
+
+Complete separation is intentionally stringent. For larger cohorts where one
+outlier should not define the descriptive check, request a quantile or median
+summary and state that choice in the report. Missing values may be omitted only
+with an explicit minimum finite replicate count.
+
+```{r robust-replicates}
+quantile_checked <- checkReplicateSeparation(
+    detectEpisodes(stage),
+    transientExample$usage,
+    transientExample$col_data,
+    replicate_method = "quantile",
+    quantile_probability = 0.10,
+    missing_values = "omit",
+    min_replicates = 2
+)
+table(quantile_checked$replicate_consistent, useNA = "ifany")
+```
+
+## Two-group and targeted-focal designs
+
+The motivating study required separation from at least two alternatives. A
+two-group study is also valid when the scientific question only requires one
+comparator; set `min_comparators = 1` in the audit and workflow. A table may
+contain only the focal groups intended for scanning; the audit infers those
+from the focal column unless `expected_focal_groups` is supplied.
+
+```{r two-groups}
+two_group <- simulateTransientDTU(
+    n_genes = 8, groups = c("treated", "control"), seed = 902
+)
+two_group_audit <- auditTransientInput(
+    two_group$pairwise,
+    two_group$stage_order,
+    min_comparators = 1
+)
+two_group_fit <- runTransientDTU(
+    two_group$pairwise,
+    two_group$stage_order,
+    min_comparators = 1,
+    reciprocal_only = FALSE
+)
+c(status = two_group_audit$status, episodes = nrow(episodeTable(two_group_fit)))
 ```
 
 ## Complete workflow

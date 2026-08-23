@@ -83,6 +83,17 @@
 #' @param group_col,stage_col Metadata columns defining groups and stages.
 #' @param min_separation Strict lower bound for consistency. Zero requires
 #'   non-overlap in the episode direction.
+#' @param replicate_method Summary used for each focal-versus-non-focal stage:
+#'   `"complete"` compares the most extreme replicates and reproduces the paper;
+#'   `"quantile"` compares inner quantiles; and `"median"` compares medians.
+#'   These are descriptive robustness checks, not replacement inference.
+#' @param quantile_probability Tail probability for `replicate_method =
+#'   "quantile"`; it must be strictly between zero and one half.
+#' @param missing_values `"incomplete"` marks an episode incomplete when any
+#'   selected value is missing; `"omit"` removes non-finite values before
+#'   checking `min_replicates`.
+#' @param min_replicates Minimum finite values required in the focal group and
+#'   in every expected comparator group at each episode stage.
 #' @param incomplete One of `"keep"`, `"drop"`, or `"error"`, controlling
 #'   episodes lacking complete finite replicate values.
 #' @param keep One of `"all"` or `"consistent"`.
@@ -109,6 +120,10 @@ checkReplicateSeparation <- function(
     group_col = "group",
     stage_col = "stage",
     min_separation = 0,
+    replicate_method = c("complete", "quantile", "median"),
+    quantile_probability = 0.10,
+    missing_values = c("incomplete", "omit"),
+    min_replicates = 1L,
     incomplete = c("keep", "drop", "error"),
     keep = c("all", "consistent")
 ) {
@@ -125,6 +140,13 @@ checkReplicateSeparation <- function(
         "episodes"
     )
     .assert_number(min_separation, "min_separation", -Inf, Inf)
+    replicate_method <- match.arg(replicate_method)
+    .assert_number(
+        quantile_probability, "quantile_probability",
+        .Machine$double.eps, 0.5 - .Machine$double.eps
+    )
+    missing_values <- match.arg(missing_values)
+    .assert_count(min_replicates, "min_replicates")
     incomplete <- match.arg(incomplete)
     keep <- match.arg(keep)
     extracted <- .extract_usage(
@@ -152,20 +174,72 @@ checkReplicateSeparation <- function(
             episodes$start_index[[index]]:episodes$end_index[[index]]
         ]
         stage_separation <- vapply(episode_stages, function(stage) {
-            focal_columns <- groups == focal & stages == stage
-            other_columns <- groups %in% setdiff(expected_groups, focal) &
-                stages == stage
-            focal_values <- matrix_value[feature_index, focal_columns]
-            other_values <- matrix_value[feature_index, other_columns]
-            if (!length(focal_values) || !length(other_values) ||
-                    any(!is.finite(focal_values)) ||
-                    any(!is.finite(other_values))) {
+            stage_groups <- lapply(expected_groups, function(group) {
+                matrix_value[
+                    feature_index,
+                    groups == group & stages == stage
+                ]
+            })
+            names(stage_groups) <- expected_groups
+            if (any(!lengths(stage_groups))) {
                 return(NA_real_)
             }
-            if (episodes$direction[[index]] == "higher") {
-                min(focal_values) - max(other_values)
+            if (missing_values == "incomplete" &&
+                    any(!is.finite(unlist(stage_groups)))) {
+                return(NA_real_)
+            }
+            stage_groups <- lapply(
+                stage_groups,
+                function(value) value[is.finite(value)]
+            )
+            if (any(lengths(stage_groups) < min_replicates)) {
+                return(NA_real_)
+            }
+            focal_values <- stage_groups[[focal]]
+            other_values <- unlist(
+                stage_groups[setdiff(expected_groups, focal)],
+                use.names = FALSE
+            )
+            summaries <- if (replicate_method == "complete") {
+                c(
+                    focal_lower = min(focal_values),
+                    focal_upper = max(focal_values),
+                    other_lower = min(other_values),
+                    other_upper = max(other_values)
+                )
+            } else if (replicate_method == "quantile") {
+                c(
+                    focal_lower = stats::quantile(
+                        focal_values, quantile_probability,
+                        names = FALSE, type = 8
+                    ),
+                    focal_upper = stats::quantile(
+                        focal_values, 1 - quantile_probability,
+                        names = FALSE, type = 8
+                    ),
+                    other_lower = stats::quantile(
+                        other_values, quantile_probability,
+                        names = FALSE, type = 8
+                    ),
+                    other_upper = stats::quantile(
+                        other_values, 1 - quantile_probability,
+                        names = FALSE, type = 8
+                    )
+                )
             } else {
-                min(other_values) - max(focal_values)
+                focal_median <- stats::median(focal_values)
+                other_median <- stats::median(other_values)
+                c(
+                    focal_lower = focal_median,
+                    focal_upper = focal_median,
+                    other_lower = other_median,
+                    other_upper = other_median
+                )
+            }
+            if (episodes$direction[[index]] == "higher") {
+                summaries[["focal_lower"]] - summaries[["other_upper"]]
+            } else {
+                summaries[["other_lower"]] - summaries[["focal_upper"]]
             }
         }, numeric(1))
         if (anyNA(stage_separation)) NA_real_ else min(stage_separation)
@@ -191,6 +265,16 @@ checkReplicateSeparation <- function(
         ]
     }
     result <- S4Vectors::DataFrame(episodes)
+    parameters <- c(
+        parameters,
+        list(
+            replicate_method = replicate_method,
+            quantile_probability = quantile_probability,
+            missing_values = missing_values,
+            min_replicates = as.integer(min_replicates),
+            min_separation = min_separation
+        )
+    )
     attr(result, "stage_order") <- stage_order
     attr(result, "expected_groups") <- expected_groups
     attr(result, "decision_parameters") <- parameters
