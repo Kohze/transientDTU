@@ -3,7 +3,7 @@
 \docType{data}
 \name{transientExample}
 \alias{transientExample}
-\title{Synthetic ordered multi-group transcript-usage example}
+\title{Legacy list representation of the synthetic example}
 \format{
 A named list with seven principal elements:
 \describe{
@@ -29,8 +29,10 @@ data("transientExample")
 A known-truth simulation with 12 two-feature genes, three groups, eight
 ordered stages, and two replicates per group-stage cell. Genes represent
 null, monotonic, persistent-divergence, and bounded transient trajectories.
-It is small enough for examples and vignettes and contains no biological or
-personally identifiable data.
+It is small enough for examples and tests and contains no biological or
+personally identifiable data. New code should generally use
+\link{transientExampleSE} and \link{transientExamplePairwise}, which follow standard
+Bioconductor container conventions.
 }
 \examples{
 data("transientExample")

@@ -7,7 +7,10 @@
 - Deterministic gene-level candidate ranking.
 - Joint threshold-grid stability analysis.
 - Known-truth simulation and benchmarking helpers.
-- `SummarizedExperiment` interoperability and a formal result class.
+- `SummarizedExperiment` interoperability, standard Bioconductor example data,
+  and a formal result class.
+- Correct preservation of gene identifiers when simulated gene-level adjusted
+  p-values are mapped back to pairwise rows.
 - Structured input audits for schema, directed-contrast coverage, and
   replicate-cell completeness.
 - First-class two-group operation through `min_comparators = 1`.

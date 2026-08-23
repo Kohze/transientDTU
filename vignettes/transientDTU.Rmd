@@ -42,7 +42,9 @@ BiocManager::install("transientDTU")
 
 ```{r load}
 library(transientDTU)
-data("transientExample")
+data("transientExampleSE")
+data("transientExamplePairwise")
+example_metadata <- S4Vectors::metadata(transientExampleSE)
 ```
 
 ## Generic pairwise input
@@ -58,7 +60,7 @@ An adjusted p-value belongs to the complete upstream testing family. Optional
 gene-level adjusted p-values can impose a second screen.
 
 ```{r input}
-head(transientExample$pairwise)
+head(transientExamplePairwise)
 ```
 
 Column names are configurable, so the table can originate from any upstream
@@ -70,10 +72,9 @@ the user which inferential properties cannot be checked from a result table.
 
 ```{r audit}
 input_audit <- auditTransientInput(
-    transientExample$pairwise,
-    transientExample$stage_order,
-    usage = transientExample$usage,
-    col_data = transientExample$col_data
+    transientExamplePairwise,
+    example_metadata$stage_order,
+    usage = transientExampleSE
 )
 input_audit
 head(input_audit$coverage)
@@ -83,8 +84,8 @@ head(input_audit$coverage)
 
 ```{r stage}
 stage <- makeStageDTU(
-    transientExample$pairwise,
-    stage_order = transientExample$stage_order,
+    transientExamplePairwise,
+    stage_order = example_metadata$stage_order,
     gene_name_col = "gene_name",
     gene_q_col = "gene_q"
 )
@@ -149,8 +150,7 @@ non-focal replicate in the required direction at every episode stage.
 ```{r replicate}
 episodes <- checkReplicateSeparation(
     episodes,
-    transientExample$usage,
-    transientExample$col_data,
+    transientExampleSE,
     keep = "consistent"
 )
 episodes <- annotateReciprocal(episodes)
@@ -170,8 +170,7 @@ with an explicit minimum finite replicate count.
 ```{r robust-replicates}
 quantile_checked <- checkReplicateSeparation(
     detectEpisodes(stage),
-    transientExample$usage,
-    transientExample$col_data,
+    transientExampleSE,
     replicate_method = "quantile",
     quantile_probability = 0.10,
     missing_values = "omit",
@@ -213,10 +212,9 @@ object.
 
 ```{r workflow}
 result <- runTransientDTU(
-    transientExample$pairwise,
-    stage_order = transientExample$stage_order,
-    usage = transientExample$usage,
-    col_data = transientExample$col_data,
+    transientExamplePairwise,
+    stage_order = example_metadata$stage_order,
+    usage = transientExampleSE,
     gene_name_col = "gene_name",
     gene_q_col = "gene_q",
     gene_q_threshold = 0.05,
@@ -228,26 +226,23 @@ diagnosticTable(result)
 ```
 
 ```{r trajectory, fig.width=7, fig.height=4}
-example_feature <- transientExample$truth$feature_id[[1]]
+example_feature <- example_metadata$truth$feature_id[[1]]
 plotTransientTrajectory(
     result,
     feature_id = example_feature,
-    focal_group = transientExample$groups[[1]]
+    focal_group = example_metadata$groups[[1]]
 )
 ```
 
 ## SummarizedExperiment interoperability
 
 ```{r se}
-se <- SummarizedExperiment::SummarizedExperiment(
-    assays = list(usage = transientExample$usage),
-    colData = S4Vectors::DataFrame(transientExample$col_data),
-    rowData = S4Vectors::DataFrame(
-        gene_id = sub("_tx[12]$", "", rownames(transientExample$usage))
-    )
-)
+transientExampleSE
+SummarizedExperiment::assayNames(transientExampleSE)
+head(SummarizedExperiment::rowData(transientExampleSE))
+head(SummarizedExperiment::colData(transientExampleSE))
 checked_from_se <- checkReplicateSeparation(
-    detectEpisodes(stage), se, keep = "consistent"
+    detectEpisodes(stage), transientExampleSE, keep = "consistent"
 )
 nrow(checked_from_se)
 ```
@@ -267,8 +262,7 @@ stability <- thresholdStability(
     comparator_tolerance = c(0.10, 0.15),
     flank_tolerance = c(0.10, 0.15),
     gene_q_threshold = list(NULL, 0.05),
-    usage = transientExample$usage,
-    col_data = transientExample$col_data,
+    usage = transientExampleSE,
     replicate_action = "filter"
 )
 head(stability$summary)

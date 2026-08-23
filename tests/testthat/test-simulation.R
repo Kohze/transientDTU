@@ -6,6 +6,12 @@ test_that("simulation is reproducible and compositional", {
     second <- simulateTransientDTU(n_genes = 12, seed = 100)
     expect_identical(first$pairwise, second$pairwise)
     expect_equal(first$usage, second$usage)
+    expect_false(anyNA(first$pairwise$gene_q))
+    expect_true(all(vapply(
+        split(first$pairwise$gene_q, first$pairwise$gene_id),
+        function(value) length(unique(value)) == 1L,
+        logical(1)
+    )))
     pairs <- matrix(first$usage, nrow = 2)
     expect_equal(colSums(pairs), rep(1, ncol(pairs)), tolerance = 1e-12)
     expect_setequal(

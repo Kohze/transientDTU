@@ -57,20 +57,20 @@ BiocManager::install("transientDTU")
 
 ```r
 library(transientDTU)
-data("transientExample")
+data("transientExampleSE")
+data("transientExamplePairwise")
+stage_order <- S4Vectors::metadata(transientExampleSE)$stage_order
 
 auditTransientInput(
-    transientExample$pairwise,
-    transientExample$stage_order,
-    usage = transientExample$usage,
-    col_data = transientExample$col_data
+    transientExamplePairwise,
+    stage_order,
+    usage = transientExampleSE
 )
 
 result <- runTransientDTU(
-    transientExample$pairwise,
-    stage_order = transientExample$stage_order,
-    usage = transientExample$usage,
-    col_data = transientExample$col_data,
+    transientExamplePairwise,
+    stage_order = stage_order,
+    usage = transientExampleSE,
     gene_name_col = "gene_name",
     gene_q_col = "gene_q",
     gene_q_threshold = 0.05,
@@ -80,6 +80,13 @@ result <- runTransientDTU(
 result
 candidateTable(result)
 ```
+
+`transientExampleSE` follows the standard Bioconductor feature-by-sample
+layout: usage values are in an assay, feature annotations are in `rowData`,
+sample design variables are in `colData`, and experiment-level declarations
+are in `metadata`. `transientExamplePairwise` is an `S4Vectors::DataFrame`
+containing the matching generic contrast table. Both are seeded, synthetic,
+and safe to use in examples and offline integration tests.
 
 Upstream result columns can have arbitrary names; map them through the column
 arguments of `makeStageDTU()` or `runTransientDTU()`. The signed effect must

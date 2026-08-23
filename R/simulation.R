@@ -176,9 +176,10 @@ simulateTransientDTU <- function(
     pairwise <- do.call(rbind, pair_rows)
     pairwise$q_value <- stats::p.adjust(pairwise$p_value, method = adjustment)
     gene_min <- tapply(pairwise$p_value, pairwise$gene_id, min)
-    gene_q <- stats::p.adjust(
-        pmin(1, gene_min * n_stages * length(groups)),
-        method = adjustment
+    gene_p <- pmin(1, gene_min * n_stages * length(groups))
+    gene_q <- stats::setNames(
+        stats::p.adjust(unname(gene_p), method = adjustment),
+        names(gene_min)
     )
     pairwise$gene_q <- unname(gene_q[pairwise$gene_id])
     if (missing_fraction > 0) {
