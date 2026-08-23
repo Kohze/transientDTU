@@ -1,7 +1,7 @@
 # Paper-output regression validation
 
 Validation date: 23 August 2026
-Package version: 1.0.0
+Package version: 0.99.0
 Script: `inst/scripts/validate-paper-regression.R`
 
 The optional local integration test passed against the retained manuscript

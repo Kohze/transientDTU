@@ -2,7 +2,14 @@
 
 # Optional local integration test. The paper data are intentionally not bundled
 # with transientDTU. Set TRANSIENTDTU_PAPER_DIR to the manuscript root before
-# running this script from an installed or development package session.
+# running this script with transientDTU installed.
+
+if (!requireNamespace("transientDTU", quietly = TRUE)) {
+    stop(
+        "Install transientDTU before running the paper regression script.",
+        call. = FALSE
+    )
+}
 
 paper_dir <- Sys.getenv("TRANSIENTDTU_PAPER_DIR", unset = NA_character_)
 if (is.na(paper_dir) || !nzchar(paper_dir)) {
@@ -65,7 +72,7 @@ stage_data <- data.frame(
 stage_data <- S4Vectors::DataFrame(stage_data)
 attr(stage_data, "stage_order") <- stage_order
 
-episodes <- detectEpisodes(
+episodes <- transientDTU::detectEpisodes(
     stage_data,
     q_threshold = 0.05,
     effect_threshold = 0.10,
@@ -93,7 +100,7 @@ sample_data <- data.frame(
 sample_data$stage <- sub("_[12]$", "", sample_data$stage_replicate)
 rownames(sample_data) <- sample_data$sample_id
 
-episodes <- checkReplicateSeparation(
+episodes <- transientDTU::checkReplicateSeparation(
     episodes,
     usage,
     sample_data,
@@ -103,7 +110,7 @@ episodes <- checkReplicateSeparation(
     incomplete = "drop",
     keep = "consistent"
 )
-episodes <- annotateReciprocal(episodes)
+episodes <- transientDTU::annotateReciprocal(episodes)
 observed <- as.data.frame(episodes)
 expected <- utils::read.csv(required[[3L]], check.names = FALSE)
 
@@ -188,7 +195,7 @@ stopifnot(
     ))
 )
 
-ranked <- as.data.frame(rankCandidates(
+ranked <- as.data.frame(transientDTU::rankCandidates(
     episodes,
     n = 6L,
     reciprocal_only = TRUE,

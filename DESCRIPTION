@@ -1,7 +1,7 @@
 Package: transientDTU
 Type: Package
 Title: Detect Transient Diverge-Reconverge Transcript Usage
-Version: 1.0.0
+Version: 0.99.0
 Authors@R: c(
     person("Robin", "Gounder", email = "robin@kohze.com",
         role = c("aut", "cre")),
@@ -33,6 +33,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
+biocViews: AlternativeSplicing, DifferentialExpression, GeneExpression, TimeCourse, Transcriptomics
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

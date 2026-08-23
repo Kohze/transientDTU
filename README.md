@@ -31,8 +31,7 @@ contrasts. They do not directly encode the more specific temporal question:
 
 ## Installation
 
-After acceptance, install the CRAN release and its Bioconductor dependencies
-with:
+After acceptance into Bioconductor, install the release with:
 
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -100,10 +99,9 @@ paper rule. It records flank completeness for every episode. Use
 
 ## Development status
 
-Version 1.0.0 is prepared as the initial CRAN release. The package includes
+Version 0.99.0 is prepared for Bioconductor review. The package includes
 unit tests, executable vignettes, an optional full-paper regression test,
-cross-platform check configuration, formal algorithm documentation, and
-AI-assistance provenance.
+formal algorithm documentation, and AI-assistance provenance.
 
 ## Licence
 

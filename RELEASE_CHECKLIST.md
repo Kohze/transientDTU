@@ -1,25 +1,33 @@
-# CRAN release checklist
+# Bioconductor submission checklist
 
 The codebase is locally release-clean. Complete these maintainer- and
-infrastructure-owned steps before uploading the source tarball:
+infrastructure-owned steps before opening a Bioconductor review:
 
-- [ ] Confirm Robin Gounder's maintainer email accepts unfiltered CRAN mail and
-      add an ORCID to `DESCRIPTION` if available.
+- [ ] Confirm Robin Gounder's maintainer email accepts Bioconductor build and
+      review mail and add an ORCID to `DESCRIPTION` if available.
 - [ ] Confirm Russell Hamilton's contributor credit and agreement to distribute
       the credited material under the package licence.
-- [ ] Confirm `transientDTU` remains unused, case-insensitively, in current and
-      archived CRAN packages and current or deprecated Bioconductor packages.
-- [ ] Run `R CMD build` with current R-patched or R-release.
-- [ ] Run `R CMD check --as-cran` on that tarball with current R-devel.
-- [ ] Submit the same tarball to Win-builder R-devel and obtain no ERRORs,
-      WARNINGs, or unexplained NOTEs.
-- [ ] Confirm release, devel, and old-release checks pass on Windows, macOS,
-      and Linux.
-- [ ] If a public repository is created, restore verified `URL` and
-      `BugReports` fields in `DESCRIPTION` before the final build.
-- [ ] Update `cran-comments.md` with the actual final check environments and
-      any unavoidable NOTE explanations.
-- [ ] Upload through the CRAN submission form and confirm the validation email.
+- [ ] Confirm `transientDTU` remains unused, case-insensitively, in current or
+      past CRAN and Bioconductor packages.
+- [ ] Create the public `kohze/transientDTU` GitHub repository, push the
+      package-only `main` branch, and then add verified `URL`, `BugReports`,
+      and `repository-code` metadata.
+- [ ] Run `R CMD build`, `R CMD check`, and `BiocCheck` in the current
+      Bioconductor devel environment and address or justify every finding.
+- [ ] Review the BiocCheck function-length NOTE. Prioritize extracting clear,
+      testable helpers from the validation-heavy functions, or explain why a
+      sequential implementation is safer where no clean boundary exists.
+- [ ] Recreate the GitHub Actions, issue templates, and pkgdown configuration
+      on a separate infrastructure branch, as required by the current
+      Bioconductor submission instructions, and confirm its checks pass.
+- [ ] Consider switching the vignettes to `BiocStyle::html_document` once
+      `BiocStyle` is available in the development environment.
+- [ ] Decide whether to add a licence-compatible public real-data vignette;
+      the seeded synthetic example remains the offline test fixture.
+- [ ] Submit the public repository through the Bioconductor contribution portal
+      and respond promptly in the public review issue.
+- [ ] After the paper receives a DOI, make its article citation the primary
+      entry returned by `citation("transientDTU")`.
 
 Do not commit the motivating study data. The optional regression script reads
 those files only through `TRANSIENTDTU_PAPER_DIR`; the repository and source

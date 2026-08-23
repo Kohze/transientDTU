@@ -32,6 +32,24 @@ replicate separation, annotates reciprocal exchanges, and creates a
 deterministic candidate ranking. Its Bioconductor role is interoperability with
 `SummarizedExperiment` and existing transcriptomic inference workflows.
 
+### Relationship to existing Bioconductor methods
+
+The packages address complementary layers of an analysis. satuRn, DEXSeq,
+DRIMSeq, and limma estimate feature- or transcript-level differential-usage
+evidence. Their effects and adjusted p-values can supply the generic pairwise
+contract after reshaping. stageR provides stage-wise screening and confirmation
+with gene-level false-discovery-rate control for predefined hypotheses; it does
+not define bounded diverge-reconverge intervals.
+
+`transientDTU` instead converts ordered, multi-group evidence into explicit
+bounded episodes and deterministic candidate rankings. It operates after
+upstream inference and does not claim episode-level false-discovery-rate
+control.
+
+This separation is deliberate: researchers retain the upstream model suited to
+their counts, replication, and experimental design while applying one auditable
+temporal decision rule to its results.
+
 ## Installation
 
 ```{r installation, eval=FALSE}
