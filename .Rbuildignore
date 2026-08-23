@@ -1,0 +1,17 @@
+^\.github$
+^_pkgdown\.yml$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
+^SECURITY\.md$
+^SUPPORT\.md$
+^cran-comments\.md$
+^LICENSE\.md$
+^CITATION\.cff$
+^README\.Rmd$
+^RELEASE_CHECKLIST\.md$
+^transientDTU\.Rproj$
+^\.gitignore$
+^\.gitattributes$
+^docs$
+^pkgdown$
+^data-raw$

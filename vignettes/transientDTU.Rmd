@@ -1,0 +1,216 @@
+---
+title: "transientDTU: detecting bounded transcript-usage episodes"
+author: "Robin Gounder"
+date: "2026-08-23"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{1. Detecting bounded transcript-usage episodes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Introduction
+
+Differential transcript-usage (DTU) tools estimate evidence for individual
+contrasts. In an ordered multi-group experiment, a researcher may instead want
+the narrower pattern in which one group separates coherently from at least two
+alternatives and subsequently reconverges. Manually collecting significant
+pairwise rows does not define the temporal unit, flanks, missing-data behavior,
+replicate criterion, or multiplicity family.
+
+`transientDTU` provides that post-inference layer. It does not replace satuRn,
+DEXSeq, DRIMSeq, limma, or other DTU engines. It standardizes their signed
+effects and adjusted p-values, detects bounded episodes, optionally verifies
+replicate separation, annotates reciprocal exchanges, and creates a
+deterministic candidate ranking. Its Bioconductor role is interoperability with
+`SummarizedExperiment` and existing transcriptomic inference workflows.
+
+## Installation
+
+```{r installation, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("transientDTU")
+```
+
+```{r load}
+library(transientDTU)
+data("transientExample")
+```
+
+## Generic pairwise input
+
+The atomic input row is one feature, gene, focal group, comparator group, and
+stage. `effect` must be the signed quantity
+
+\[
+\mathrm{usage}_{focal} - \mathrm{usage}_{comparator}.
+\]
+
+An adjusted p-value belongs to the complete upstream testing family. Optional
+gene-level adjusted p-values can impose a second screen.
+
+```{r input}
+head(transientExample$pairwise)
+```
+
+Column names are configurable, so the table can originate from any upstream
+method. Duplicate atomic contrasts are rejected rather than silently reduced.
+
+## Standardize stage evidence
+
+```{r stage}
+stage <- makeStageDTU(
+    transientExample$pairwise,
+    stage_order = transientExample$stage_order,
+    gene_name_col = "gene_name",
+    gene_q_col = "gene_q"
+)
+stage
+```
+
+For each feature, focal group, and stage, this table records the weakest
+component q-value, minimum and maximum absolute effect, effect direction,
+comparator spread, and whether every expected comparator was observed.
+
+## Detect and annotate episodes
+
+```{r detect}
+episodes <- detectEpisodes(
+    stage,
+    q_threshold = 0.05,
+    effect_threshold = 0.10,
+    comparator_tolerance = 0.10,
+    flank_tolerance = 0.10,
+    gene_q_threshold = 0.05
+)
+episodes
+```
+
+Consecutive equal non-zero states collapse to one interval. The immediate stage
+before and after the interval must be observed and must meet the flank
+tolerance; boundary runs are not called.
+
+The legacy-compatible default uses all available finite flank summaries and
+records `n_finite_flanks` and `flanking_complete`. A stricter sensitivity is:
+
+```{r complete-flanks}
+complete_flanks <- detectEpisodes(
+    stage,
+    gene_q_threshold = 0.05,
+    flank_missing = "complete"
+)
+c(available = nrow(episodes), complete = nrow(complete_flanks))
+```
+
+Replicate separation verifies that every focal replicate is beyond every
+non-focal replicate in the required direction at every episode stage.
+
+```{r replicate}
+episodes <- checkReplicateSeparation(
+    episodes,
+    transientExample$usage,
+    transientExample$col_data,
+    keep = "consistent"
+)
+episodes <- annotateReciprocal(episodes)
+rankCandidates(
+    episodes,
+    n = 6,
+    reciprocal_only = TRUE,
+    replicate_consistent_only = TRUE
+)
+```
+
+## Complete workflow
+
+`runTransientDTU()` performs the same sequence and returns a validated result
+object.
+
+```{r workflow}
+result <- runTransientDTU(
+    transientExample$pairwise,
+    stage_order = transientExample$stage_order,
+    usage = transientExample$usage,
+    col_data = transientExample$col_data,
+    gene_name_col = "gene_name",
+    gene_q_col = "gene_q",
+    gene_q_threshold = 0.05,
+    panel_size = 6
+)
+result
+candidateTable(result)
+diagnosticTable(result)
+```
+
+```{r trajectory, fig.width=7, fig.height=4}
+example_feature <- transientExample$truth$feature_id[[1]]
+plotTransientTrajectory(
+    result,
+    feature_id = example_feature,
+    focal_group = transientExample$groups[[1]]
+)
+```
+
+## SummarizedExperiment interoperability
+
+```{r se}
+se <- SummarizedExperiment::SummarizedExperiment(
+    assays = list(usage = transientExample$usage),
+    colData = S4Vectors::DataFrame(transientExample$col_data),
+    rowData = S4Vectors::DataFrame(
+        gene_id = sub("_tx[12]$", "", rownames(transientExample$usage))
+    )
+)
+checked_from_se <- checkReplicateSeparation(
+    detectEpisodes(stage), se, keep = "consistent"
+)
+nrow(checked_from_se)
+```
+
+Users starting from proportions can optionally obtain generic pairwise evidence
+with `fitPairwiseUsage()`. This convenience adapter uses a saturated limma
+cell-means model. A purpose-built DTU model remains preferable when its
+assumptions match the data.
+
+## Joint threshold stability
+
+```{r stability}
+stability <- thresholdStability(
+    stage,
+    q_threshold = c(0.01, 0.05),
+    effect_threshold = c(0.10, 0.15),
+    comparator_tolerance = c(0.10, 0.15),
+    flank_tolerance = c(0.10, 0.15),
+    gene_q_threshold = list(NULL, 0.05),
+    usage = transientExample$usage,
+    col_data = transientExample$col_data,
+    replicate_action = "filter"
+)
+head(stability$summary)
+stability$selection_frequency
+```
+
+The Cartesian grid is deliberate. Varying one threshold at a time can conceal
+interactions between evidence, effect, comparator, and flank requirements.
+
+## Interpretation boundary
+
+An episode is a candidate satisfying a decision rule, not an independently
+validated developmental switch. Component-test adjustment does not imply
+episode-level FDR control. Bulk composition, transcript identifiability,
+post-selection inference, technical batches, and external validation must be
+addressed in the scientific application.
+
+## Session information
+
+```{r session-info}
+sessionInfo()
+```

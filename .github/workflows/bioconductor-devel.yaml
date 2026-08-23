@@ -1,0 +1,33 @@
+name: Bioconductor devel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  BiocCheck:
+    runs-on: ubuntu-latest
+    container: bioconductor/bioconductor_docker:devel
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install package dependencies
+        shell: bash
+        run: |
+          Rscript -e 'BiocManager::install(c("BiocCheck", "remotes"), ask = FALSE, update = FALSE)'
+          Rscript -e 'remotes::install_deps(dependencies = TRUE, upgrade = "never")'
+      - name: Build and check
+        shell: bash
+        run: |
+          R CMD build .
+          package_tarball=$(find . -maxdepth 1 -name 'transientDTU_*.tar.gz' -print -quit)
+          R CMD check --as-cran "$package_tarball"
+      - name: Run BiocCheck for a new package
+        shell: bash
+        run: |
+          package_tarball=$(find . -maxdepth 1 -name 'transientDTU_*.tar.gz' -print -quit)
+          Rscript -e 'BiocCheck::BiocCheck(commandArgs(TRUE)[1], `new-package` = TRUE, `quit-with-status` = TRUE)' "$package_tarball"

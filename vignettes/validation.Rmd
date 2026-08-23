@@ -1,0 +1,126 @@
+---
+title: "Validating the transientDTU decision layer"
+author: "Robin Gounder"
+date: "2026-08-23"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{2. Validating the transientDTU decision layer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Introduction
+
+A reusable post-inference framework needs operating-characteristic evidence,
+not only a successful application. This vignette demonstrates known-truth
+simulation and joint sensitivity analysis for `transientDTU`. The simulator is
+intentionally scoped to the decision layer: it does not claim to reproduce
+read assignment, count dispersion, or every upstream DTU model.
+
+```{r load}
+library(transientDTU)
+```
+
+## Known trajectory classes
+
+```{r simulate}
+simulated <- simulateTransientDTU(
+    n_genes = 24,
+    n_stages = 8,
+    n_replicates = 2,
+    signal = 0.30,
+    noise_sd = 0.015,
+    seed = 901
+)
+table(simulated$gene_truth$trajectory)
+```
+
+Null genes have no systematic group effect. Monotonic signals do not
+reconverge. Persistent signals reach the final boundary. Transient signals
+separate at one interior stage and have observed baseline flanks. Every gene
+has two complementary features, making true transient genes reciprocal.
+
+```{r one-fit}
+fit <- runTransientDTU(
+    simulated$pairwise,
+    simulated$stage_order,
+    usage = simulated$usage,
+    col_data = simulated$col_data,
+    gene_name_col = "gene_name",
+    gene_q_col = "gene_q",
+    panel_size = Inf
+)
+diagnosticTable(fit)
+```
+
+## Repeated known-truth benchmark
+
+```{r benchmark}
+benchmark <- benchmarkTransientDTU(
+    n_simulations = 3,
+    simulation_args = list(
+        n_genes = 20,
+        signal = 0.30,
+        noise_sd = 0.015
+    ),
+    detector_args = list(
+        gene_name_col = "gene_name",
+        gene_q_col = "gene_q"
+    ),
+    seed = 1000
+)
+benchmark$results
+benchmark$summary
+```
+
+Precision is undefined in a run with no detected episodes and is therefore
+summarized with missing values removed. `any_false_positive` estimates the
+simulation-level probability of at least one false episode; `null_gene_fpr`
+reports the fraction of null genes with any detected episode.
+
+## Stress dimensions
+
+Researchers should vary at least:
+
+- signal magnitude and replicate noise;
+- number of replicates;
+- one-stage versus multi-stage true episodes;
+- missing atomic contrasts;
+- adjustment method and testing-family definition; and
+- all detector thresholds jointly.
+
+```{r missingness}
+missing <- benchmarkTransientDTU(
+    n_simulations = 2,
+    simulation_args = list(
+        n_genes = 16,
+        missing_fraction = 0.02
+    ),
+    detector_args = list(
+        gene_name_col = "gene_name",
+        gene_q_col = "gene_q"
+    ),
+    seed = 1200
+)
+missing$summary
+```
+
+## Scope of the benchmark
+
+The simulator's p-values use the known generating noise and global adjustment.
+They isolate the detector's behavior after inference. A publication claiming
+performance for a particular quantifier and DTU engine should additionally
+simulate or resample at the count/read-assignment level and apply that complete
+pipeline before `transientDTU`.
+
+## Session information
+
+```{r session-info}
+sessionInfo()
+```

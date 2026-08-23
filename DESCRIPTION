@@ -1,0 +1,43 @@
+Package: transientDTU
+Type: Package
+Title: Detect Transient Diverge-Reconverge Transcript Usage
+Version: 0.99.0
+Authors@R: c(
+    person("Robin", "Gounder", email = "robin@kohze.com",
+        role = c("aut", "cre")),
+    person("Russell", "Hamilton", role = "ctb")
+    )
+Description: Converts stage-specific differential transcript usage results into
+    explicit, bounded diverge-reconverge episodes. The package accepts generic
+    pairwise contrast tables from upstream differential usage methods, supports
+    replicate-level separation checks, annotates reciprocal exchanges, and
+    produces deterministic candidate rankings. It also provides simulation,
+    threshold-stability, benchmarking, visualization, and
+    SummarizedExperiment-compatible workflows for evaluating the operating
+    characteristics of the decision layer.
+License: Artistic-2.0
+URL: https://github.com/kohze/transientDTU
+BugReports: https://github.com/kohze/transientDTU/issues
+Depends:
+    R (>= 4.4.0)
+Imports:
+    graphics,
+    methods,
+    S4Vectors,
+    stats,
+    SummarizedExperiment,
+    utils,
+    withr
+Suggests:
+    ggplot2,
+    knitr,
+    limma,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+biocViews: AlternativeSplicing, DifferentialExpression, GeneExpression,
+    TimeCourse, Transcriptomics
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
