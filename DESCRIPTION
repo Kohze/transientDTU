@@ -1,7 +1,7 @@
 Package: transientDTU
 Type: Package
 Title: Detect Transient Diverge-Reconverge Transcript Usage
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: c(
     person("Robin", "Gounder", email = "robin@kohze.com",
         role = c("aut", "cre")),

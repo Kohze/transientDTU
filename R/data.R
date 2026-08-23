@@ -22,7 +22,7 @@
 #' }
 #'
 #' @source Generated entirely by [simulateTransientDTU()] with seed 20260823;
-#'   see `data-raw/make-example-data.R` in the source repository.
+#'   see `inst/scripts/make-example-data.R`.
 #'
 #' @usage data("transientExample")
 #' @examples
@@ -53,7 +53,7 @@
 #' }
 #'
 #' @source Generated entirely by [simulateTransientDTU()] with seed 20260823;
-#'   see `data-raw/make-example-data.R` in the source repository.
+#'   see `inst/scripts/make-example-data.R`.
 #'
 #' @usage data("transientExampleSE")
 #' @examples
@@ -77,7 +77,7 @@
 #'   `p_value`, `q_value`, and `gene_q`.
 #'
 #' @source Generated entirely by [simulateTransientDTU()] with seed 20260823;
-#'   see `data-raw/make-example-data.R` in the source repository.
+#'   see `inst/scripts/make-example-data.R`.
 #'
 #' @usage data("transientExamplePairwise")
 #' @examples

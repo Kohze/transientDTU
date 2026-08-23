@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite transientDTU and the associated methods article."
+message: "Please cite transientDTU when using the software in published work."
 title: "transientDTU: Detect Transient Diverge-Reconverge Transcript Usage"
 type: software
 authors:
@@ -7,6 +7,5 @@ authors:
     given-names: Robin
   - family-names: Hamilton
     given-names: Russell
-version: 0.99.0
-date-released: 2026-08-23
+version: 0.99.1
 license: Artistic-2.0

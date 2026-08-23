@@ -1,7 +1,19 @@
-# Recreate the package's synthetic example dataset.
-# Run from the package root after loading the development package.
+#!/usr/bin/env Rscript
 
-transientExample <- simulateTransientDTU(
+## Recreate the package's seeded synthetic example data. Run this script from
+## the package source root with transientDTU installed. It overwrites only the
+## three named package-data files below.
+
+if (!requireNamespace("transientDTU", quietly = TRUE)) {
+    stop("Install transientDTU before recreating its example data.",
+        call. = FALSE)
+}
+if (!file.exists("DESCRIPTION") || !dir.exists("data")) {
+    stop("Run this script from the transientDTU package source root.",
+        call. = FALSE)
+}
+
+transientExample <- transientDTU::simulateTransientDTU(
     n_genes = 12,
     n_stages = 8,
     n_replicates = 2,
@@ -43,14 +55,12 @@ save(
     compress = "xz",
     version = 3
 )
-
 save(
     transientExampleSE,
     file = file.path("data", "transientExampleSE.rda"),
     compress = "xz",
     version = 3
 )
-
 save(
     transientExamplePairwise,
     file = file.path("data", "transientExamplePairwise.rda"),

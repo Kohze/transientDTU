@@ -6,7 +6,8 @@ infrastructure-owned steps before opening a Bioconductor review:
 - [ ] Confirm Robin Gounder's maintainer email accepts Bioconductor build and
       review mail and add an ORCID to `DESCRIPTION` if available.
 - [ ] Confirm Russell Hamilton's contributor credit and agreement to distribute
-      the credited material under the package licence.
+      the credited material under the package licence. Confirm whether `ctb` or
+      `aut` is the correct role and align `DESCRIPTION` and `CITATION.cff`.
 - [ ] Confirm `transientDTU` remains unused, case-insensitively, in current or
       past CRAN and Bioconductor packages.
 - [ ] Create the public `kohze/transientDTU` GitHub repository, push the

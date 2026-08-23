@@ -27,10 +27,23 @@
 #' differential expression and differential transcript usage. *Genome Biology*,
 #' 18, 151. \doi{10.1186/s13059-017-1277-0}.
 #'
-#' Gilis J, Vitting-Seerup K, Van den Berge K, Clement L (2023). satuRn:
+#' Gilis J, Vitting-Seerup K, Van den Berge K, Clement L (2021). satuRn:
 #' scalable analysis of differential transcript usage for bulk and single-cell
-#' RNA-sequencing applications. *Genome Biology*, 24, 24.
-#' \doi{10.1186/s13059-023-02863-7}.
+#' RNA-sequencing applications. *F1000Research*, 10, 374.
+#' \doi{10.12688/f1000research.51749.2}.
+#'
+#' Anders S, Reyes A, Huber W (2012). Detecting differential usage of exons
+#' from RNA-seq data. *Genome Research*, 22, 2008--2017.
+#' \doi{10.1101/gr.133744.111}.
+#'
+#' Nowicka M, Robinson MD (2016). DRIMSeq: a Dirichlet-multinomial framework
+#' for multivariate count outcomes in genomics. *F1000Research*, 5, 1356.
+#' \doi{10.12688/f1000research.8900.2}.
+#'
+#' Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK (2015). limma
+#' powers differential expression analyses for RNA-sequencing and microarray
+#' studies. *Nucleic Acids Research*, 43, e47.
+#' \doi{10.1093/nar/gkv007}.
 #'
 #' @keywords internal
 "_PACKAGE"

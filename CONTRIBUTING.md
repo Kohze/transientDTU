@@ -10,12 +10,13 @@ Before opening a pull request:
 2. Add or update a `testthat` test for changed behaviour.
 3. Run `devtools::document()` and `devtools::test()`.
 4. Run `R CMD build .` and `R CMD check <tarball>`.
-5. Run `R CMD check --as-cran` and BiocCheck on the tarball in the current
-   Bioconductor devel environment:
+5. Run `R CMD check --as-cran`, `BiocCheckGitClone()`, and BiocCheck on the
+   tarball in the current Bioconductor devel environment:
 
    ```r
+   BiocCheck::BiocCheckGitClone("transientDTU")
    BiocCheck::BiocCheck(
-       "transientDTU_0.99.0.tar.gz",
+       "transientDTU_0.99.1.tar.gz",
        `new-package` = TRUE
    )
    ```

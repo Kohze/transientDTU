@@ -1,4 +1,4 @@
-# transientDTU 0.99.0
+# transientDTU 0.99.1
 
 - Initial Bioconductor submission version.
 - Generic pairwise-DTU input contract for ordered multi-group designs.
@@ -9,6 +9,8 @@
 - Known-truth simulation and benchmarking helpers.
 - `SummarizedExperiment` interoperability, standard Bioconductor example data,
   and a formal result class.
+- Reviewer-facing workflow documentation, complete related-method references,
+  and an installed recipe for reproducing the seeded example data.
 - Correct preservation of gene identifiers when simulated gene-level adjusted
   p-values are mapped back to pairwise rows.
 - Structured input audits for schema, directed-contrast coverage, and

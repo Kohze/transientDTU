@@ -4,7 +4,7 @@ This is a design stress test, not a claim that twenty researchers used or
 endorsed the software. Each researcher represents a plausible combination of
 data and aim. Scores are: **3 strong**, **2 conditional**, **1 limited**, and
 **0 inappropriate**. “Before” describes the initial pre-audit implementation
-audit; “after” includes the robustness work recorded in the current commit.
+audit; “after” includes the robustness work in the current version.
 
 | # | Researcher, data, and aim | Before | After | Neutral assessment after improvement |
 |---:|---|---:|---:|---|

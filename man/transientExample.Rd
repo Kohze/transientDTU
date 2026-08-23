@@ -20,7 +20,7 @@ p-values.}
 }
 \source{
 Generated entirely by \code{\link[=simulateTransientDTU]{simulateTransientDTU()}} with seed 20260823;
-see \code{data-raw/make-example-data.R} in the source repository.
+see \code{inst/scripts/make-example-data.R}.
 }
 \usage{
 data("transientExample")
