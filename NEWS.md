@@ -1,6 +1,6 @@
-# transientDTU 0.99.0
+# transientDTU 1.0.0
 
-- Initial Bioconductor submission version.
+- Initial CRAN submission version.
 - Generic pairwise-DTU input contract for ordered multi-group designs.
 - Bounded diverge-reconverge episode detection with explicit edge-case rules.
 - Optional replicate-separation and reciprocal-exchange annotations.

@@ -1,9 +1,5 @@
 # transientDTU
 
-[![R package check](https://github.com/kohze/transientDTU/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kohze/transientDTU/actions/workflows/R-CMD-check.yaml)
-[![Bioconductor devel](https://github.com/kohze/transientDTU/actions/workflows/bioconductor-devel.yaml/badge.svg)](https://github.com/kohze/transientDTU/actions/workflows/bioconductor-devel.yaml)
-[![License: Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](LICENSE.md)
-
 `transientDTU` detects explicit, bounded **diverge-reconverge transcript-usage
 episodes** in ordered multi-group studies. It is a post-inference decision
 layer: upstream tools estimate differential transcript usage; `transientDTU`
@@ -35,16 +31,8 @@ contrasts. They do not directly encode the more specific temporal question:
 
 ## Installation
 
-The development version can be installed from GitHub:
-
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("kohze/transientDTU")
-```
-
-After acceptance into Bioconductor, install the release version with:
+After acceptance, install the CRAN release and its Bioconductor dependencies
+with:
 
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -95,9 +83,8 @@ always be `focal usage - comparator usage`. See the
 method-specific reshaping guidance.
 
 Two-group studies use `min_comparators = 1`; the paper-compatible multi-group
-default remains two comparators. See the
-[20-researcher use-case analysis](USE_CASE_ANALYSIS.md) for supported,
-conditional, and deliberately out-of-scope designs.
+default remains two comparators. The workflow vignette documents two-group and
+targeted-focal designs together with the interpretation boundary.
 
 ## Scope and statistical boundary
 
@@ -113,9 +100,10 @@ paper rule. It records flank completeness for every episode. Use
 
 ## Development status
 
-Version 0.99.0 is prepared for Bioconductor review. The package includes unit
-tests, executable vignettes, an optional full-paper regression test, GitHub
-Actions, formal algorithm documentation, and AI-assistance provenance.
+Version 1.0.0 is prepared as the initial CRAN release. The package includes
+unit tests, executable vignettes, an optional full-paper regression test,
+cross-platform check configuration, formal algorithm documentation, and
+AI-assistance provenance.
 
 ## Licence
 

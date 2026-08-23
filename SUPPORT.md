@@ -3,9 +3,12 @@
 Before requesting help, read the workflow and validation vignettes, inspect
 `?runTransientDTU`, and reduce the problem to synthetic or de-identified data.
 
-- Before Bioconductor acceptance, use GitHub Discussions or a GitHub issue.
-- After acceptance, usage questions should go to the Bioconductor Support site.
-- Reproducible software defects belong in GitHub Issues.
+- Before CRAN acceptance, contact the package maintainer listed in
+  `DESCRIPTION`.
+- After acceptance, use the support or bug-report location shown on the CRAN
+  package page when one is available.
+- Reproducible software defects should use that public bug-report location or,
+  as a fallback, the package maintainer.
 - Security concerns must follow `SECURITY.md`.
 
 Include `sessionInfo()`, package version, the complete call, stage ordering,

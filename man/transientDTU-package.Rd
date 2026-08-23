@@ -40,14 +40,6 @@ scalable analysis of differential transcript usage for bulk and single-cell
 RNA-sequencing applications. \emph{Genome Biology}, 24, 24.
 \doi{10.1186/s13059-023-02863-7}.
 }
-\seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/kohze/transientDTU}
-  \item Report bugs at \url{https://github.com/kohze/transientDTU/issues}
-}
-
-}
 \author{
 \strong{Maintainer}: Robin Gounder \email{robin@kohze.com}
 
