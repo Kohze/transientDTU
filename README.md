@@ -12,6 +12,14 @@ reconverge on both sides?
 [Quick start](#quick-start) · [Input contract](#input-contract) ·
 [Statistical scope](#statistical-scope) · [Documentation](#documentation)
 
+<p align="center">
+  <img src="man/figures/transientDTU-diverge-reconverge.png"
+       alt="transientDTU target: group-specific divergence bounded by temporal reconvergence"
+       width="100%">
+</p>
+
+<p align="center"><em>The conceptual target detected by transientDTU across ordered stages.</em></p>
+
 ## At a glance
 
 | | |
