@@ -13,12 +13,12 @@ reconverge on both sides?
 [Statistical scope](#statistical-scope) · [Documentation](#documentation)
 
 <p align="center">
-  <img src="man/figures/gnao1-methylation-expression.png"
-       alt="Gnao1 methylation, relative isoform composition, absolute transcript expression, and evidence hierarchy across mouse brain development"
+  <img src="man/figures/shtn1-thesis-original.png"
+       alt="Original thesis figure showing Shtn1 methylation and expression across mouse forebrain development"
        width="88%">
 </p>
 
-<p align="center"><em>A companion-study application linking developmental transcript redistribution to methylation context.</em></p>
+<p align="center"><em>Original thesis application: Shtn1 methylation and expression across development.</em></p>
 
 ## At a glance
 
