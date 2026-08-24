@@ -10,7 +10,7 @@ infrastructure-owned steps before opening a Bioconductor review:
       `aut` is the correct role and align `DESCRIPTION` and `CITATION.cff`.
 - [ ] Confirm `transientDTU` remains unused, case-insensitively, in current or
       past CRAN and Bioconductor packages.
-- [ ] Create the public `kohze/transientDTU` GitHub repository, push the
+- [x] Create the public `Kohze/transientDTU` GitHub repository, push the
       package-only `main` branch, and then add verified `URL`, `BugReports`,
       and `repository-code` metadata.
 - [ ] Run `R CMD build`, `R CMD check`, and `BiocCheck` in the current
@@ -18,9 +18,10 @@ infrastructure-owned steps before opening a Bioconductor review:
 - [ ] Review the BiocCheck function-length NOTE. Prioritize extracting clear,
       testable helpers from the validation-heavy functions, or explain why a
       sequential implementation is safer where no clean boundary exists.
-- [ ] Recreate the GitHub Actions, issue templates, and pkgdown configuration
+- [x] Recreate the GitHub Actions, issue templates, and pkgdown configuration
       on a separate infrastructure branch, as required by the current
-      Bioconductor submission instructions, and confirm its checks pass.
+      Bioconductor submission instructions, and push that branch publicly.
+- [ ] Confirm the checks on the public infrastructure branch pass.
 - [ ] Consider switching the vignettes to `BiocStyle::html_document` once
       `BiocStyle` is available in the development environment.
 - [ ] Decide whether to add a licence-compatible public real-data vignette;
