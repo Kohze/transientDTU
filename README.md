@@ -30,15 +30,6 @@ reconverge on both sides?
 | **Best suited to** | Ordered developmental, longitudinal, perturbation, or lineage designs with observed flanks |
 | **Not an upstream model** | Use satuRn, DEXSeq, DRIMSeq, limma, or another suitable method to estimate DTU evidence first |
 
-```mermaid
-flowchart LR
-    A[Upstream DTU evidence] --> B[Audit and standardize]
-    B --> C[Detect bounded episodes]
-    C --> D[Check replicate separation]
-    D --> E[Annotate reciprocal exchange]
-    E --> F[Rank candidates]
-```
-
 The decision rule is explicit about component significance, effect size,
 comparator coherence, episode duration, flanking reconvergence, missing data,
 and replicate robustness. Every retained candidate can therefore be traced
@@ -229,4 +220,4 @@ package supports published work, please also cite the companion article once
 its DOI is available; that article citation will be added here and to the
 package metadata when assigned.
 
-`transientDTU` is distributed under the Artistic License 2.0.
+`transientDTU` is distributed under the MIT License.

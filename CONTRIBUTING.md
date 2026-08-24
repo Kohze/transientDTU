@@ -24,6 +24,6 @@ Before opening a pull request:
 6. Update `NEWS.md` when user-visible behaviour changes.
 
 Do not commit identifying study data, credentials, generated check folders, or
-large derived files. Contributions must be available under Artistic-2.0. State
+large derived files. Contributions must be available under the MIT License. State
 the use of generative AI in the pull request when it materially assisted code,
 tests, documentation, or review, and verify every contributed line.

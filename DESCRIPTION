@@ -16,7 +16,7 @@ Description: Converts stage-specific differential transcript usage results into
     benchmarking, visualization, and 'SummarizedExperiment'-compatible
     workflows for evaluating the operating characteristics of the decision
     layer.
-License: Artistic-2.0
+License: MIT + file LICENSE
 URL: https://github.com/Kohze/transientDTU
 BugReports: https://github.com/Kohze/transientDTU/issues
 Depends:
