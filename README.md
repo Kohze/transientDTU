@@ -69,7 +69,7 @@ During review, clone the package-only default branch and install it from a
 current Bioconductor devel environment:
 
 ```sh
-git clone https://github.com/kohze/transientDTU.git
+git clone https://github.com/Kohze/transientDTU.git
 R CMD INSTALL transientDTU
 ```
 
@@ -193,6 +193,20 @@ contains runnable examples, two executable vignettes, seeded Bioconductor-style
 example data, unit tests, an optional full-paper regression test, formal
 algorithm documentation, and AI-assistance provenance.
 
+## Companion article
+
+`transientDTU` is the reusable implementation accompanying *A systematic
+framework for detecting transient developmental transcript-usage patterns
+identifies an E15.5-centred midbrain candidate landscape* by Robin Gounder and
+Russell Hamilton. The manuscript and reproducibility materials are maintained
+at <https://github.com/kohze/developmental-dtu-patterns>.
+
+The installed script `scripts/validate-paper-regression.R` reproduced all
+1,348 archived episode rows and the exact ordered six-gene panel from the
+manuscript. This regression establishes software equivalence to the paper's
+decision layer; it is not independent biological validation. The article DOI
+will be added here and to the package citation metadata when assigned.
+
 ## Support and contributing
 
 Please use synthetic or de-identified data in reproducible reports. See
@@ -202,7 +216,9 @@ Security-sensitive reports should follow [SECURITY.md](SECURITY.md).
 
 ## Citation and licence
 
-Use `citation("transientDTU")` for the current software citation. A dedicated
-article citation will be added after the paper receives a DOI.
+Use `citation("transientDTU")` for the current software citation. If the
+package supports published work, please also cite the companion article once
+its DOI is available; that article citation will be added here and to the
+package metadata when assigned.
 
 `transientDTU` is distributed under the Artistic License 2.0.

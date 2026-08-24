@@ -22,3 +22,7 @@
   value and minimum-replicate policies.
 - Faster stage aggregation; a 96,000-row synthetic table improved from about
   27 seconds to about 3 seconds in the local single-process benchmark.
+- Formal linkage to the companion framework article, including a paper-output
+  regression that reproduces all 1,348 archived episodes and the exact ordered
+  six-gene panel.
+- An explicit installed software citation matching the manuscript bibliography.

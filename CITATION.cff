@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite transientDTU when using the software in published work."
+message: "Please cite transientDTU when using the software and the companion article once its DOI is available."
 title: "transientDTU: Detect Transient Diverge-Reconverge Transcript Usage"
 type: software
 authors:
@@ -9,3 +9,13 @@ authors:
     given-names: Russell
 version: 0.99.1
 license: Artistic-2.0
+repository-code: "https://github.com/Kohze/transientDTU"
+references:
+  - type: article
+    title: "A systematic framework for detecting transient developmental transcript-usage patterns identifies an E15.5-centred midbrain candidate landscape"
+    authors:
+      - family-names: Gounder
+        given-names: Robin
+      - family-names: Hamilton
+        given-names: Russell
+    url: "https://github.com/kohze/developmental-dtu-patterns"

@@ -17,6 +17,8 @@ Description: Converts stage-specific differential transcript usage results into
     workflows for evaluating the operating characteristics of the decision
     layer.
 License: Artistic-2.0
+URL: https://github.com/Kohze/transientDTU
+BugReports: https://github.com/Kohze/transientDTU/issues
 Depends:
     R (>= 4.4.0)
 Imports:
