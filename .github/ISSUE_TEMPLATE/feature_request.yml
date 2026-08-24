@@ -1,0 +1,25 @@
+name: Feature request
+description: Propose a scoped enhancement to transientDTU.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Research use case
+      description: Describe the study design and the temporal question this would support.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain the expected inputs, outputs, and decision rule.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Note existing package functions or upstream methods you considered.

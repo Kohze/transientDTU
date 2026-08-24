@@ -1,0 +1,30 @@
+url: https://kohze.github.io/transientDTU/
+
+template:
+  bootstrap: 5
+
+home:
+  title: transientDTU
+  description: Detect bounded diverge-reconverge transcript-usage episodes.
+
+navbar:
+  structure:
+    left:
+      - intro
+      - reference
+      - articles
+      - news
+    right:
+      - search
+      - github
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/Kohze/transientDTU
+
+articles:
+  - title: Workflows
+    navbar: Workflows
+    contents:
+      - transientDTU
+      - validation
