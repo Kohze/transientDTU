@@ -252,6 +252,28 @@ plotTransientTrajectory(
 )
 ```
 
+## Methylation-expression panels
+
+The companion study combines transcript fractions with developmental
+methylation measurements. `simulateMethylationExpression()` provides a seeded
+interface example, while `plotMethylationExpression()` accepts equivalent
+processed measurements from a study.
+
+```{r methylation-panel, fig.width=7, fig.height=9}
+methylation_example <- simulateMethylationExpression(seed = 22)
+methylation_panel <- plotMethylationExpression(
+    methylation_example$observations,
+    cpg = methylation_example$cpg,
+    stage_order = methylation_example$stage_order,
+    main = "Example methylation and transcript-fraction analysis"
+)
+methylation_panel$correlations
+```
+
+The panel is descriptive. A correlation or fitted line does not identify a
+methylation mechanism, and the function does not replace normalization,
+matched-sample design, uncertainty analysis, or multiplicity control.
+
 ## SummarizedExperiment interoperability
 
 ```{r se}

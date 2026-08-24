@@ -18,7 +18,7 @@ reconverge on both sides?
        width="88%">
 </p>
 
-<p align="center"><em>Original thesis application: Shtn1 methylation and expression across development.</em></p>
+<p align="center"><em>Original Shtn1 thesis analysis motivating the package's methylation-transcript panel interface.</em></p>
 
 ## At a glance
 
@@ -26,7 +26,7 @@ reconverge on both sides?
 |---|---|
 | **Input** | Directed stage-specific effects and adjusted p-values, plus optional replicate-level usage |
 | **Bioconductor interface** | `SummarizedExperiment`, `S4Vectors::DataFrame`, and a validated S4 result object |
-| **Output** | Explicit episode intervals, diagnostics, reciprocal-exchange annotations, and deterministic gene rankings |
+| **Output** | Episode intervals, diagnostics, reciprocal-exchange annotations, gene rankings, and descriptive methylation-transcript panels |
 | **Best suited to** | Ordered developmental, longitudinal, perturbation, or lineage designs with observed flanks |
 | **Not an upstream model** | Use satuRn, DEXSeq, DRIMSeq, limma, or another suitable method to estimate DTU evidence first |
 
@@ -54,6 +54,19 @@ multi-stage episodes and flanks, complete/quantile/median replicate summaries,
 joint threshold sensitivity analysis, and known-truth simulation.
 
 ## Installation
+
+Install the current GitHub prerelease with Bioconductor dependencies resolved
+from the matching repositories:
+
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+
+options(repos = BiocManager::repositories())
+remotes::install_github("Kohze/transientDTU@v0.99.2")
+```
 
 After acceptance into Bioconductor, install the release with:
 
@@ -118,6 +131,29 @@ candidateTable(result)
 diagnosticTable(result)
 decisionParameters(result)
 ```
+
+## Methylation-expression panels
+
+`transientDTU` can generate reproducible example measurements and draw the
+same three-part visual structure used in the thesis: methylation-transcript
+association, developmental trajectories, and CpG-level methylation states.
+
+```r
+methylation_example <- simulateMethylationExpression(seed = 22)
+
+panel <- plotMethylationExpression(
+    methylation_example$observations,
+    cpg = methylation_example$cpg,
+    stage_order = methylation_example$stage_order,
+    main = "Methylation and transcript-fraction analysis"
+)
+
+panel$correlations
+```
+
+The same plotting function accepts processed study measurements through a
+documented long-table contract. It is descriptive: fitted relationships do not
+establish that methylation causes transcript redistribution.
 
 ## Input contract
 
@@ -187,7 +223,7 @@ episode definition.
 
 ## Development status
 
-Version 0.99.1 is the initial Bioconductor submission candidate. The package
+Version 0.99.2 is the initial Bioconductor submission candidate. The package
 contains runnable examples, two executable vignettes, seeded Bioconductor-style
 example data, unit tests, an optional full-paper regression test, formal
 algorithm documentation, and AI-assistance provenance.

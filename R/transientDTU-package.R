@@ -6,7 +6,10 @@
 #' upstream statistical models. The package formalizes stage eligibility,
 #' episode boundaries, replicate separation, reciprocal exchanges, and stable
 #' candidate ranking, while exposing simulation and sensitivity tools needed to
-#' audit the decision layer.
+#' audit the decision layer. Descriptive companion-study utilities can also
+#' simulate matched methylation and transcript-fraction measurements and draw
+#' association, developmental-trajectory, and CpG-state panels with
+#' [simulateMethylationExpression()] and [plotMethylationExpression()].
 #'
 #' The primary workflow is:
 #'
@@ -20,6 +23,8 @@
 #'
 #' [SummarizedExperiment::SummarizedExperiment] assays can be used for
 #' replicate checks and the optional [fitPairwiseUsage()] inference adapter.
+#' Methylation-transcript panels are descriptive visualizations and do not
+#' provide causal inference.
 #'
 #' @references
 #' Van den Berge K, Soneson C, Robinson MD, Clement L (2017). stageR: a general

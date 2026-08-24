@@ -1,3 +1,14 @@
+# transientDTU 0.99.2
+
+- Adopt the MIT License across package metadata and repository documentation.
+- Add `simulateMethylationExpression()` and `plotMethylationExpression()` for
+  reproducible example points and descriptive association, trajectory, and
+  CpG-state panels modeled on the original thesis application.
+- Link the README to the original thesis application motivating the new panel
+  interface.
+- Simplify README rendering by removing the zoomable workflow diagram.
+- Revalidate the source package, examples, tests, and rebuilt vignettes.
+
 # transientDTU 0.99.1
 
 - Initial Bioconductor submission version.

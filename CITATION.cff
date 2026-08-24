@@ -7,7 +7,7 @@ authors:
     given-names: Robin
   - family-names: Hamilton
     given-names: Russell
-version: 0.99.1
+version: 0.99.2
 license: MIT
 repository-code: "https://github.com/Kohze/transientDTU"
 references:

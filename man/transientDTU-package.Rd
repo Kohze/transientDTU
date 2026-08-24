@@ -12,7 +12,10 @@ experiments. It consumes generic pairwise DTU evidence rather than replacing
 upstream statistical models. The package formalizes stage eligibility,
 episode boundaries, replicate separation, reciprocal exchanges, and stable
 candidate ranking, while exposing simulation and sensitivity tools needed to
-audit the decision layer.
+audit the decision layer. Descriptive companion-study utilities can also
+simulate matched methylation and transcript-fraction measurements and draw
+association, developmental-trajectory, and CpG-state panels with
+\code{\link[=simulateMethylationExpression]{simulateMethylationExpression()}} and \code{\link[=plotMethylationExpression]{plotMethylationExpression()}}.
 }
 \details{
 The primary workflow is:
@@ -28,6 +31,8 @@ The primary workflow is:
 
 \link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment} assays can be used for
 replicate checks and the optional \code{\link[=fitPairwiseUsage]{fitPairwiseUsage()}} inference adapter.
+Methylation-transcript panels are descriptive visualizations and do not
+provide causal inference.
 }
 \references{
 Van den Berge K, Soneson C, Robinson MD, Clement L (2017). stageR: a general
@@ -52,6 +57,14 @@ Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK (2015). limma
 powers differential expression analyses for RNA-sequencing and microarray
 studies. \emph{Nucleic Acids Research}, 43, e47.
 \doi{10.1093/nar/gkv007}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Kohze/transientDTU}
+  \item Report bugs at \url{https://github.com/Kohze/transientDTU/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Robin Gounder \email{robin@kohze.com}

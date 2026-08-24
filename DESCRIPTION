@@ -1,7 +1,7 @@
 Package: transientDTU
 Type: Package
 Title: Detect Transient Diverge-Reconverge Transcript Usage
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: c(
     person("Robin", "Gounder", email = "robin@kohze.com",
         role = c("aut", "cre")),
@@ -13,9 +13,9 @@ Description: Converts stage-specific differential transcript usage results into
     preflight input auditing and configurable replicate-level robustness
     checks, annotates reciprocal exchanges, and produces deterministic
     candidate rankings. It also provides simulation, threshold-stability,
-    benchmarking, visualization, and 'SummarizedExperiment'-compatible
-    workflows for evaluating the operating characteristics of the decision
-    layer.
+    benchmarking, methylation-transcript panel visualization, and
+    'SummarizedExperiment'-compatible workflows for evaluating the operating
+    characteristics of the decision layer.
 License: MIT + file LICENSE
 URL: https://github.com/Kohze/transientDTU
 BugReports: https://github.com/Kohze/transientDTU/issues
