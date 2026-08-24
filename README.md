@@ -12,6 +12,14 @@ reconverge on both sides?
 [Quick start](#quick-start) · [Input contract](#input-contract) ·
 [Statistical scope](#statistical-scope) · [Documentation](#documentation)
 
+<p align="center">
+  <img src="man/figures/gnao1-methylation-expression.png"
+       alt="Gnao1 methylation, relative isoform composition, absolute transcript expression, and evidence hierarchy across mouse brain development"
+       width="88%">
+</p>
+
+<p align="center"><em>A companion-study application linking developmental transcript redistribution to methylation context.</em></p>
+
 ## At a glance
 
 | | |
